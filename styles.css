@@ -25,21 +25,49 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
   filter: grayscale(100%) contrast(94%) brightness(103%);
 }
 
-/* ETIQUETAS FLOTANTES DE TRAMOS Y ESTRUCTURAS EN MAPA */
+/* ETIQUETAS DE TRAMOS (RECTÁNGULO ENVOLVENTE COMPLETO Y CONTRASTADO) */
+.leaflet-div-icon.tramo-label-wrapper {
+  background: transparent !important;
+  border: none !important;
+  width: max-content !important;
+  height: auto !important;
+}
 .tramo-map-label {
-  background: rgba(255, 255, 255, 0.94);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  width: max-content;
   border: 2px solid #0f172a;
   border-radius: 8px;
-  padding: 4px 10px;
+  padding: 5px 11px;
   font-family: 'Inter', sans-serif;
   font-size: 11.5px;
   font-weight: 800;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+  white-space: nowrap;
+  letter-spacing: 0.2px;
+}
+.tramo-map-label.lbl-t1 { border-color: #d97706; color: #78350f; background: rgba(254, 243, 199, 0.97); }
+.tramo-map-label.lbl-t2 { border-color: #ea580c; color: #7c2d12; background: rgba(255, 237, 213, 0.97); }
+.tramo-map-label.lbl-t3 { border-color: #0284c7; color: #0c4a6e; background: rgba(224, 242, 254, 0.97); }
+
+/* PORTALES DE TÚNEL E ÍCONOS DE ESTRUCTURAS */
+.tunnel-portal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  width: max-content;
+  background: #0f172a;
+  color: #ffffff;
+  border: 2px solid #f8fafc;
+  border-radius: 7px;
+  padding: 3px 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 10.5px;
+  font-weight: 800;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
   white-space: nowrap;
 }
-.tramo-map-label.lbl-t1 { border-color: #f59e0b; color: #92400e; background: #fffbeb; }
-.tramo-map-label.lbl-t2 { border-color: #ea580c; color: #9a3412; background: #fff7ed; }
-.tramo-map-label.lbl-t3 { border-color: #0284c7; color: #075985; background: #f0f9ff; }
 
 .struct-badge-icon {
   display: flex; align-items: center; justify-content: center;
@@ -56,6 +84,7 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 .modal-card {
   background: var(--card); max-width: 540px; width: 100%; border-radius: 16px; padding: 26px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35); border: 1px solid var(--border);
+  max-height: 92vh; overflow-y: auto;
 }
 .modal-card.wide { max-width: 780px; }
 .modal-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
@@ -91,30 +120,30 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 .app-shell { display: flex; flex-direction: column; height: 100vh; }
 .topbar {
   height: 58px; background: var(--navy); color: #fff; display: flex; align-items: center;
-  justify-content: space-between; padding: 0 18px; border-bottom: 1px solid #334155; flex-shrink: 0;
+  justify-content: space-between; padding: 0 18px; border-bottom: 1px solid #334155; flex-shrink: 0; gap: 10px;
 }
-.topbar-brand { display: flex; align-items: center; gap: 12px; }
-.brand-dot { width: 12px; height: 12px; border-radius: 50%; background: #38bdf8; box-shadow: 0 0 10px #38bdf8; }
-.brand-title { display: block; font-size: 14px; font-weight: 700; letter-spacing: 0.3px; }
-.brand-sub { display: block; font-size: 11px; color: #94a3b8; }
-.topbar-actions { display: flex; align-items: center; gap: 9px; }
+.topbar-brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.brand-dot { width: 11px; height: 11px; border-radius: 50%; background: #38bdf8; box-shadow: 0 0 10px #38bdf8; flex-shrink: 0; }
+.brand-title { display: block; font-size: 14px; font-weight: 700; letter-spacing: 0.3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.brand-sub { display: block; font-size: 11px; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topbar-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .visit-pill {
-  background: rgba(255,255,255,0.08); padding: 5px 11px; border-radius: 999px; font-size: 12px;
-  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.08); padding: 5px 10px; border-radius: 999px; font-size: 12px;
+  display: flex; align-items: center; gap: 6px; white-space: nowrap;
 }
 .pulse-green { width: 8px; height: 8px; border-radius: 50%; background: #10b981; }
 .btn-topbar-icon {
   display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.12); color: #f8fafc;
-  border: 1px solid #475569; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;
+  border: 1px solid #475569; padding: 6px 11px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap;
 }
 .btn-topbar-icon:hover { background: rgba(255,255,255,0.22); }
 .btn-sustento {
-  background: var(--primary); color: #fff; border: none; padding: 7px 14px;
-  border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s;
+  background: var(--primary); color: #fff; border: none; padding: 7px 13px;
+  border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; white-space: nowrap;
 }
 .btn-sustento:hover { background: var(--primary-dark); }
 .user-chip {
-  display: flex; align-items: center; gap: 8px; background: var(--navy-light); padding: 4px 10px 4px 5px;
+  display: flex; align-items: center; gap: 7px; background: var(--navy-light); padding: 4px 10px 4px 5px;
   border-radius: 999px; font-size: 12px;
 }
 .user-chip img { width: 24px; height: 24px; border-radius: 50%; }
@@ -126,16 +155,16 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 #map { width: 100%; height: 100%; z-index: 1; }
 
 .tramo-bar {
-  position: absolute; top: 14px; left: 54px; z-index: 500; display: flex; flex-wrap: wrap; gap: 6px;
+  position: absolute; top: 12px; left: 54px; right: 14px; z-index: 500; display: flex; gap: 6px;
   background: rgba(255,255,255,0.96); padding: 6px; border-radius: 10px; box-shadow: 0 4px 14px rgba(0,0,0,0.15);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border); width: fit-content; max-width: calc(100% - 68px); overflow-x: auto;
 }
 .tramo-btn {
-  border: 1px solid transparent; background: transparent; padding: 6px 11px; border-radius: 7px; font-size: 12px;
-  font-weight: 700; color: var(--muted); cursor: pointer; display: flex; align-items: center; gap: 6px;
+  border: 1px solid transparent; background: transparent; padding: 6px 10px; border-radius: 7px; font-size: 11.5px;
+  font-weight: 700; color: var(--muted); cursor: pointer; display: flex; align-items: center; gap: 5px; white-space: nowrap;
 }
 .tramo-btn.active { background: var(--navy); color: #fff; }
-.pill-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.pill-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
 
 .layers-card {
   position: absolute; bottom: 22px; left: 14px; z-index: 500; background: rgba(255,255,255,0.97);
@@ -144,27 +173,27 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 }
 .layers-header {
   background: var(--navy); color: #fff; padding: 8px 12px; font-weight: 700; display: flex;
-  justify-content: space-between; align-items: center;
+  justify-content: space-between; align-items: center; cursor: pointer;
 }
-.layers-header button { background: none; border: none; color: #fff; font-size: 16px; cursor: pointer; }
+.layers-header button { background: none; border: none; color: #fff; font-size: 16px; cursor: pointer; font-weight: 800; }
 .layers-body { padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; max-height: 360px; overflow-y: auto; }
 .layers-group-title { font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: #64748b; letter-spacing: 0.4px; }
 .layers-body hr { border: none; border-top: 1px solid #e2e8f0; margin: 2px 0; }
 .layer-item { display: flex; align-items: center; gap: 8px; cursor: pointer; color: #1e293b; font-weight: 500; }
-.swatch { width: 16px; height: 6px; border-radius: 2px; display: inline-block; }
+.swatch { width: 16px; height: 6px; border-radius: 2px; display: inline-block; flex-shrink: 0; }
 .ico-legend {
   width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
   font-size: 9px; font-weight: 800; flex-shrink: 0;
 }
 
-/* DASHBOARD DERECHO CON ARTE DEFINIDO Y PASTEL */
+/* DASHBOARD DERECHO */
 .dashboard-pane {
   width: 455px; max-width: 100%; background: #f8fafc; border-left: 1.5px solid var(--border);
   display: flex; flex-direction: column; height: 100%; overflow: hidden;
 }
 .tabs-nav { display: flex; border-bottom: 1.5px solid var(--border); background: #ffffff; flex-shrink: 0; }
 .tab-btn {
-  flex: 1; padding: 12px 6px; border: none; background: none; font-size: 11.5px; font-weight: 700;
+  flex: 1; padding: 11px 4px; border: none; background: none; font-size: 11.5px; font-weight: 700;
   color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent; transition: 0.15s;
 }
 .tab-btn.active { color: var(--primary-dark); border-bottom-color: var(--primary); background: #f0f9ff; }
@@ -197,7 +226,6 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 .finance-badges { display: flex; flex-wrap: wrap; gap: 6px; font-size: 11px; color: #334155; }
 .finance-badges span { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 6px; }
 
-/* CUADRÍCULA VISUAL DE PILARES */
 .pillars-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .pillar-box {
   background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px;
@@ -210,7 +238,6 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 .pillar-box strong { font-size: 12px; color: var(--navy); }
 .pillar-box span { font-size: 11px; color: var(--muted); line-height: 1.35; }
 
-/* TRAMOS Y PREDIOS VISUAL */
 .tramo-visual-bars { display: flex; flex-direction: column; gap: 10px; }
 .tv-row { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 10px; }
 .tv-head { display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; margin-bottom: 5px; }
@@ -232,7 +259,6 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 .b-t2 { border-left: 4px solid #ea580c; }
 .b-t3 { border-left: 4px solid #0284c7; }
 
-/* BENEFICIOS POR DISTRITO INFOGRÁFICO */
 .district-selector-box { margin-bottom: 12px; background: #fff; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 12px; }
 .district-selector-box label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--navy); }
 .district-panel { background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 14px; }
@@ -247,7 +273,6 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 }
 .dist-benefit-ico { font-size: 18px; flex-shrink: 0; }
 
-/* LÍNEA DE TIEMPO SIMULADOR Y BOTONES DE ESQUEMAS */
 .timeline-flow { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
 .tl-badge { display: inline-block; background: var(--navy); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; width: fit-content; }
 .tl-step {
@@ -280,9 +305,7 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 }
 .panel-footer a { color: var(--primary-dark); text-decoration: none; font-weight: 700; }
 
-/* ==========================================================================
-   MÓDULO DE LECTURA AMPLIADO DEL SUSTENTO TÉCNICO
-   ========================================================================== */
+/* MÓDULO DE LECTURA AMPLIADO DEL SUSTENTO TÉCNICO */
 .reader-backdrop {
   position: fixed; inset: 0; background: rgba(15, 23, 42, 0.86); backdrop-filter: blur(5px);
   z-index: 9500; display: flex; justify-content: center; overflow-y: auto; padding: 18px 14px;
@@ -360,14 +383,12 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 }
 .sv-stats strong { color: var(--primary-dark); min-width: 78px; font-size: 13px; }
 
-/* GRÁFICO 3: DIAGRAMA MULTIMODAL */
 .multimodal-diagram { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
 .mm-node { background: #fff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px; }
 .mm-badge { display: inline-block; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 99px; margin-bottom: 6px; }
 .mm-node strong { display: block; font-size: 13px; color: var(--navy); margin-bottom: 5px; }
 .mm-node p { font-size: 12px; color: var(--muted); line-height: 1.45; margin: 0; }
 
-/* GRÁFICO 4: FLUJO DE PROCESO PREDIAL */
 .process-steps { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
 .p-step {
   flex: 1; min-width: 140px; background: #fff; border: 1px solid #cbd5e1; border-radius: 10px;
@@ -388,10 +409,40 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 .doc-signoff { margin-top: 24px; padding-top: 16px; border-top: 1px solid #cbd5e1; font-size: 13px; color: var(--muted); }
 .doc-signoff a { color: var(--primary-dark); font-weight: 700; text-decoration: none; }
 
+/* ==========================================================================
+   ADAPTACIÓN RESPONSIVA PARA TABLET Y CELULAR (BLINDAJE DESKTOP INTACTO)
+   ========================================================================== */
 @media (max-width: 960px) {
   .workspace { flex-direction: column; }
-  .map-pane { height: 52%; }
-  .dashboard-pane { width: 100%; height: 48%; border-left: none; border-top: 1px solid var(--border); }
+  .map-pane { height: 50%; flex: none; }
+  .dashboard-pane { width: 100%; height: 50%; border-left: none; border-top: 1.5px solid var(--border); }
+  .brand-sub { display: none; }
   .reader-body { padding: 22px 18px; }
   .doc-kpi-banner, .charts-grid, .multimodal-diagram { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .topbar { padding: 0 10px; height: 52px; }
+  .brand-title { font-size: 12px; }
+  .visit-text { display: none; }
+  .visit-pill { padding: 5px 8px; }
+  #user-name { display: none; }
+  .user-chip { padding: 3px 6px 3px 4px; }
+  .btn-topbar-icon span { display: none; }
+  .btn-sustento { padding: 6px 9px; font-size: 11px; }
+
+  .tramo-bar { left: 48px; top: 10px; padding: 4px; gap: 4px; max-width: calc(100% - 56px); }
+  .tramo-btn { padding: 5px 8px; font-size: 11px; }
+  .layers-card { bottom: 12px; left: 10px; width: 235px; }
+  .layers-body { max-height: 220px; }
+
+  .tab-btn { font-size: 10.5px; padding: 9px 2px; }
+  .kpi-value { font-size: 16px; }
+  .pillars-grid, .modal-triggers-grid { grid-template-columns: 1fr; }
+
+  .reader-container { width: 98%; max-height: calc(100vh - 20px); }
+  .reader-topbar { flex-direction: column; align-items: flex-start; padding: 12px 14px; gap: 8px; }
+  .reader-topbar-actions { width: 100%; justify-content: flex-end; }
+  .doc-cover h1 { font-size: 20px; }
+  .p-arrow { display: none; }
 }
