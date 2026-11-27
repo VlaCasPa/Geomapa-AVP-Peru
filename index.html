@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- MODAL DE ACCESO Y SUSTENTO OFICIAL -->
+  <!-- MODAL DE ACCESO DUAL Y SUSTENTO OFICIAL -->
   <div id="auth-modal" class="modal-backdrop">
     <div class="modal-card">
       <div class="modal-badge">INTELIGENCIA TERRITORIAL &amp; GESTIÓN DE INFRAESTRUCTURA</div>
@@ -21,11 +21,11 @@
       </p>
 
       <div class="disclaimer-box">
-        <strong>Trazabilidad Oficial y Carácter Informativo:</strong>
+        <strong>Trazabilidad Oficial y Precisión Cartográfica:</strong>
         <ul>
-          <li>Cartografía y vértices del Derecho de Vía basados en la <strong>R.M. N.° 869-2025-MTC/01.02</strong> y cartografía abierta referencial.</li>
-          <li>Datos financieros, cronogramas e infraestructura extraídos del Plan de Negocios de la <strong>Sociedad Concesionaria Anillo Vial S.A.C.</strong> (Cintra, Sacyr, ACCIONA), <strong>OSITRAN</strong> y <strong>PROINVERSIÓN</strong>.</li>
-          <li>Herramienta desarrollada con fines de divulgación técnica y gestión de proyectos (PMBOK, Design Thinking &amp; Data Mining).</li>
+          <li>Derecho de Vía referencial basado en la <strong>R.M. N.° 869-2025-MTC/01.02</strong> (2,798 vértices WGS84) y cartografía abierta.</li>
+          <li><strong>Nota Técnica:</strong> La ubicación puntual de intercambios (IVD), pasos a desnivel, peajes, túneles y cruces es referencial y debe ser corroborada con los planos del <strong>Estudio Definitivo de Ingeniería (EDI)</strong>.</li>
+          <li>Datos financieros y cronogramas extraídos de <strong>OSITRAN</strong>, <strong>PROINVERSIÓN</strong> y la <strong>Sociedad Concesionaria Anillo Vial S.A.C.</strong> (Cintra, Sacyr, ACCIONA).</li>
         </ul>
       </div>
 
@@ -36,7 +36,7 @@
           <option value="Gestión de Proyectos / PMO">Gestión de Proyectos / PMO</option>
           <option value="Gestión Predial / Legal / Permisos">Gestión Predial / Legal / Permisos</option>
           <option value="Inversión / Banca / Finanzas">Inversión / Banca / Finanzas</option>
-          <option value="Sector Público / Academia / Otro">Sector Público / Academia / Otro</option>
+          <option value="Sector Público / Academia / Público General">Sector Público / Academia / Público General</option>
         </select>
       </div>
 
@@ -44,6 +44,11 @@
         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
         <span>Ingresar al Visor Ejecutivo con Google</span>
       </button>
+
+      <button id="btn-guest-login" class="btn-guest">
+        Explorar como Invitado (Vista Rápida sin registro)
+      </button>
+
       <p id="auth-error" class="auth-error hidden"></p>
 
       <div class="modal-footer">
@@ -70,8 +75,13 @@
           <span class="visit-text">Visitas: </span><strong id="visit-counter">...</strong>
         </div>
 
+        <button id="btn-open-guide" class="btn-topbar-icon" title="Guía Rápida en 3 Pasos y Glosario Técnico">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span>Guía</span>
+        </button>
+
         <button id="btn-open-buzon" class="btn-topbar-icon" title="Abrir Buzón Ejecutivo de Contacto">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           <span>Buzón</span>
         </button>
 
@@ -80,9 +90,9 @@
         </button>
 
         <div class="user-chip">
-          <img id="user-photo" src="" alt="Usuario" />
+          <img id="user-photo" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Usuario" />
           <span id="user-name">Invitado</span>
-          <button id="btn-logout" title="Cerrar sesión">&times;</button>
+          <button id="btn-logout" title="Salir / Cambiar modo">&times;</button>
         </div>
       </div>
     </header>
@@ -93,12 +103,18 @@
       <section class="map-pane">
         <div id="map"></div>
 
-        <!-- SELECTOR RÁPIDO DE TRAMOS CON COLORES COHERENTES -->
+        <!-- SELECTOR RÁPIDO DE TRAMOS -->
         <div class="tramo-bar">
           <button class="tramo-btn active" data-tramo="ALL">Todos (34.8 km)</button>
           <button class="tramo-btn t1-pill" data-tramo="I"><span class="pill-dot" style="background:#f59e0b"></span> Tramo I (8.7 km)</button>
           <button class="tramo-btn t2-pill" data-tramo="II"><span class="pill-dot" style="background:#ea580c"></span> Tramo II (15.1 km)</button>
           <button class="tramo-btn t3-pill" data-tramo="III"><span class="pill-dot" style="background:#0284c7"></span> Tramo III (11.0 km)</button>
+        </div>
+
+        <!-- CONMUTADOR DE MAPA BASE (GRIS / SATÉLITE SUAVE) -->
+        <div class="basemap-switch" title="Cambiar fondo cartográfico">
+          <button id="btn-base-gray" class="bm-btn active">Mapa Gris</button>
+          <button id="btn-base-sat" class="bm-btn">Satélite</button>
         </div>
 
         <!-- CONTROL FLOTANTE DE CAPAS DINÁMICAS -->
@@ -113,21 +129,29 @@
             <label class="layer-item"><input type="checkbox" data-layer="tramo2" checked /><span class="swatch" style="background:#ea580c"></span> Tramo II (Norte&ndash;Este)</label>
             <label class="layer-item"><input type="checkbox" data-layer="tramo3" checked /><span class="swatch" style="background:#0284c7"></span> Tramo III (Este&ndash;Sur)</label>
             <hr />
-            <div class="layers-group-title">Infraestructura y Territorio</div>
-            <label class="layer-item"><input type="checkbox" data-layer="derechoVia" /><span class="swatch" style="background:#8b5cf6; opacity:.65"></span> Derecho de Vía (R.M. 869-2025)</label>
+            <div class="layers-group-title">Infraestructura (Ref. EDI) y Territorio</div>
+            <label class="layer-item"><input type="checkbox" data-layer="derechoVia" /><span class="swatch" style="background:#c4b5fd; border:1px dashed #8b5cf6;"></span> Derecho de Vía Pastel (R.M. 869)</label>
             <label class="layer-item"><input type="checkbox" data-layer="ivd" /><span class="ico-legend" style="background:#fef08a; color:#854d0e;">IV</span> Intercambios Viales (12)</label>
-            <label class="layer-item"><input type="checkbox" data-layer="bypass" /><span class="ico-legend" style="background:#fee2e2; color:#991b1b;">BP</span> Pasos a Desnivel / Bypass (24)</label>
+            <label class="layer-item"><input type="checkbox" data-layer="bypass" /><span class="ico-legend" style="background:#fee2e2; color:#991b1b;">BP</span> Pasos a Desnivel (Zoom &ge;12)</label>
             <label class="layer-item"><input type="checkbox" data-layer="tuneles" /><span class="ico-legend" style="background:#334155; color:#ffffff;">TN</span> Túneles Tramo II (4.22 km)</label>
             <label class="layer-item"><input type="checkbox" data-layer="viaducto" /><span class="ico-legend" style="background:#fce7f3; color:#9d174d;">VD</span> Viaducto Av. El Sol (1.41 km)</label>
             <label class="layer-item"><input type="checkbox" data-layer="peajes" /><span class="ico-legend" style="background:#e0f2fe; color:#075985;">PJ</span> Estaciones de Peaje (5)</label>
             <label class="layer-item"><input type="checkbox" data-layer="cruces" /><span class="ico-legend" style="background:#ccfbf1; color:#115e59;">CR</span> Cruces Especiales (Río/FFCC)</label>
             <label class="layer-item"><input type="checkbox" data-layer="distritos" /><span class="swatch" style="background:#94a3b8; opacity:.5"></span> Distritos (Clic para beneficios)</label>
+            <div class="edi-micro-note">* Ubicaciones puntuales referenciales; corroborar con planos del EDI.</div>
           </div>
         </aside>
       </section>
 
-      <!-- PANEL DERECHO: DASHBOARD GERENCIAL Y FICHA DISTRITAL -->
+      <!-- PANEL DERECHO: DASHBOARD GERENCIAL Y BUSCADOR -->
       <aside class="dashboard-pane">
+        <!-- BUSCADOR RÁPIDO DE ESTRUCTURAS Y PROGRESIVAS -->
+        <div class="quick-search-bar">
+          <input type="text" id="struct-search-input" list="struct-datalist" placeholder="🔍 Buscar estructura o PK (ej. Gambetta, Túnel 1, 27+150)..." />
+          <datalist id="struct-datalist"></datalist>
+          <button id="btn-clear-search" title="Limpiar búsqueda">&times;</button>
+        </div>
+
         <!-- PESTAÑAS DE NAVEGACIÓN -->
         <nav class="tabs-nav">
           <button class="tab-btn active" data-tab="resumen">Resumen &amp; Finanzas</button>
@@ -162,8 +186,8 @@
           </div>
 
           <div class="card-section">
-            <h3>Curva Proyectada de CAPEX + Gasto Financiero (2025&ndash;2029)</h3>
-            <p class="small-muted">Total periodo: <strong>US$ 2,048.79 M</strong> (Inversión promedio US$ 300 M/año por 7 años):</p>
+            <h3>CAPEX Fase Inicial (2025&ndash;2029) vs. Inversión Total</h3>
+            <p class="small-muted">Desembolsos proyectados 2025&ndash;2029: <strong>US$ 2,048.79 M</strong> (60.3% del CAPEX total estimado de US$ 3,400 M):</p>
             <div class="capex-bars">
               <div class="bar-row"><span>2025</span><div class="bar-track"><div class="bar-fill" style="width:24%; background:#f59e0b"></div></div><strong>US$ 162.5M</strong></div>
               <div class="bar-row"><span>2026</span><div class="bar-track"><div class="bar-fill" style="width:21%; background:#f59e0b"></div></div><strong>US$ 140.8M</strong></div>
@@ -173,7 +197,7 @@
             </div>
             <div class="finance-badges">
               <span>Carta Fianza BCP: <strong>US$ 30M</strong></span>
-              <span>37 Bancos (65% Int. / 24% Des. / 11% Loc.)</span>
+              <span>37 Entidades: 65% Int. / 24% Des. / 11% Loc.</span>
             </div>
           </div>
 
@@ -204,20 +228,20 @@
           </div>
         </div>
 
-        <!-- TAB 2: TRAMOS Y PREDIOS -->
+        <!-- TAB 2: TRAMOS Y PREDIOS (SINCRONIZABLE CON CLIC EN MAPA) -->
         <div id="tab-tramos" class="tab-content">
           <div class="card-section">
             <h3>Distribución de Longitud (34.8 km) y Plazos de Obra</h3>
             <div class="tramo-visual-bars">
-              <div class="tv-row">
+              <div class="tv-row" id="card-tramo-I">
                 <div class="tv-head"><span class="tag-t1">Tramo I &bull; 8.7 km (25%)</span><strong>5.2 años (38m obra)</strong></div>
                 <div class="tv-track"><div class="tv-fill" style="width:55%; background:#f59e0b;"></div></div>
               </div>
-              <div class="tv-row">
+              <div class="tv-row" id="card-tramo-II">
                 <div class="tv-head"><span class="tag-t2">Tramo II &bull; 15.1 km (43.4%)</span><strong>9.5 años (60m túneles)</strong></div>
                 <div class="tv-track"><div class="tv-fill" style="width:100%; background:#ea580c;"></div></div>
               </div>
-              <div class="tv-row">
+              <div class="tv-row" id="card-tramo-III">
                 <div class="tv-head"><span class="tag-t3">Tramo III &bull; 11.0 km (31.6%)</span><strong>5.8 años (42m obra)</strong></div>
                 <div class="tv-track"><div class="tv-fill" style="width:62%; background:#0284c7;"></div></div>
               </div>
@@ -225,7 +249,7 @@
           </div>
 
           <div class="card-section">
-            <h3>Inventario de Estructuras por Tramo</h3>
+            <h3>Inventario de Estructuras por Tramo (Ref. EDI)</h3>
             <table class="mini-table">
               <thead>
                 <tr>
@@ -253,9 +277,9 @@
                 <div style="width:4%; background:#0284c7;" title="Tramos I y III: 4%"></div>
               </div>
               <div class="ps-cards">
-                <div class="ps-item b-t1"><strong>Tramo I:</strong> Meta predios Mes 24. Convenios telecom vigentes (13m) y compensaciones PROINVERSIÓN activas.</div>
-                <div class="ps-item b-t2"><strong>Tramo II:</strong> ~2,454 expropiaciones (de ~4,100 predios). Remediación ambiental ex vertedero <em>La Vizcachera</em> (Mes 78).</div>
-                <div class="ps-item b-t3"><strong>Tramo III:</strong> Meta predios Mes 28. Creación del <em>Parque Lineal Separadora Industrial</em>.</div>
+                <div class="ps-item b-t1" id="predial-tramo-I"><strong>Tramo I:</strong> Meta predios Mes 24. Convenios telecom vigentes (13m) y compensaciones PROINVERSIÓN activas.</div>
+                <div class="ps-item b-t2" id="predial-tramo-II"><strong>Tramo II:</strong> ~2,454 expropiaciones (de ~4,100 predios). Remediación ambiental ex vertedero <em>La Vizcachera</em> (Mes 78).</div>
+                <div class="ps-item b-t3" id="predial-tramo-III"><strong>Tramo III:</strong> Meta predios Mes 28. Creación del <em>Parque Lineal Separadora Industrial</em>.</div>
               </div>
             </div>
           </div>
@@ -330,6 +354,44 @@
     </main>
   </div>
 
+  <!-- MODAL: GUÍA RÁPIDA EN 3 PASOS Y GLOSARIO TÉCNICO -->
+  <div id="guide-modal" class="modal-backdrop hidden">
+    <div class="modal-card wide">
+      <div class="modal-header-row">
+        <h2>Guía Rápida de Uso &amp; Glosario Técnico</h2>
+        <button id="close-guide" class="btn-close">&times;</button>
+      </div>
+      <p class="modal-subtitle">Explore el Anillo Vial Periférico en 3 pasos sencillos:</p>
+      <div class="guide-steps-grid">
+        <div class="guide-step-box">
+          <span class="gs-num">Paso 1</span>
+          <strong>Navega los 3 Tramos</strong>
+          <p>Usa los botones superiores (<em>Tramo I, II, III</em>) o el buscador rápido para acercarte a cualquier intercambio, túnel o peaje y alterna entre <em>Mapa Gris</em> y <em>Satélite</em>.</p>
+        </div>
+        <div class="guide-step-box">
+          <span class="gs-num">Paso 2</span>
+          <strong>Enciende Capas</strong>
+          <p>En <em>Capas del Proyecto</em> activa el Derecho de Vía pastel (R.M. N.° 869-2025-MTC/01.02), obras singulares o los 12 distritos para ver sus beneficios urbanos.</p>
+        </div>
+        <div class="guide-step-box">
+          <span class="gs-num">Paso 3</span>
+          <strong>Analiza Indicadores</strong>
+          <p>Revisa las 4 pestañas ejecutivas (<em>Finanzas, Predios, Distritos, Plazos</em>) o abre el <strong>Sustento Técnico</strong> para ver gráficos completos y fuentes oficiales.</p>
+        </div>
+      </div>
+
+      <h3 style="font-size:13.5px; color:#0f172a; margin: 14px 0 8px;">Glosario de Siglas de Ingeniería y Concesiones:</h3>
+      <div class="glossary-grid">
+        <div><strong>IVD:</strong> Intercambio Vial a Desnivel.</div>
+        <div><strong>EDI:</strong> Estudio Definitivo de Ingeniería (planos de detalle).</div>
+        <div><strong>IGA / EIA-d:</strong> Instrumento / Estudio de Impacto Ambiental Detallado.</div>
+        <div><strong>ITS:</strong> Sistemas Inteligentes de Transporte (Smart Highway).</div>
+        <div><strong>PAP:</strong> Plan de Adquisición de Predios (Cláusula 6.29).</div>
+        <div><strong>DTL-S / ETL:</strong> Diagnóstico y Expediente Técnico-Legal predial.</div>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL EMERGENTE: BUZÓN EJECUTIVO DE CONTACTO -->
   <div id="buzon-modal" class="modal-backdrop hidden">
     <div class="modal-card">
@@ -393,7 +455,7 @@
             Los proyectos de infraestructura vial urbana de gran escala concentran información técnica dispersa entre resoluciones ministeriales, cuadros de coordenadas UTM, planos de planta, modelos financieros y planes de gestión socioambiental. En consecuencia, el presente geoportal ha sido concebido como una <strong>plataforma interactiva de inteligencia territorial</strong> destinada a sintetizar dichos insumos en un entorno visual único, facilitando la lectura ejecutiva del avance y los beneficios estructurales del <strong>Anillo Vial Periférico (AVP)</strong>.
           </p>
           <p>
-            Asimismo, la herramienta adopta un enfoque estrictamente <strong>informativo, técnico y propositivo</strong>, orientado a evidenciar cómo esta megaobra cierra brechas críticas de conectividad, impulsa la competitividad logística del país y moderniza la movilidad metropolitana mediante ingeniería subterránea, viaductos, pasos a desnivel y Sistemas Inteligentes de Transporte (ITS).
+            <strong>Precisión Cartográfica y Alcance Referencial:</strong> El polígono del Derecho de Vía proviene de los cuadros oficiales de coordenadas UTM WGS84 Zona 18S aprobados mediante la <strong>R.M. N.° 869-2025-MTC/01.02</strong>. Por su parte, la ubicación puntual de las estructuras singulares (intercambios viales, pasos a desnivel, peajes, túneles, viaducto y cruces) tiene carácter referencial y deberá ser corroborada con los planos de detalle del <strong>Estudio Definitivo de Ingeniería (EDI)</strong>.
           </p>
 
           <div class="doc-kpi-banner">
@@ -458,8 +520,8 @@
 
           <div class="charts-grid">
             <div class="chart-card">
-              <h4>Gráfico 1: Curva de Inversión CAPEX + Gasto Financiero (2025&ndash;2029)</h4>
-              <p class="chart-sub">Desembolsos proyectados según Plan de Negocios (Total periodo: US$ 2,048.79 Millones)</p>
+              <h4>Gráfico 1: Curva CAPEX + Gasto Financiero (Fase 2025&ndash;2029)</h4>
+              <p class="chart-sub">Desembolsos proyectados: US$ 2,048.79 Millones (sobre US$ 3,400 M de inversión total)</p>
               <svg viewBox="0 0 420 190" class="svg-chart" aria-label="Gráfico de barras CAPEX 2025 a 2029">
                 <line x1="45" y1="25" x2="400" y2="25" stroke="#e2e8f0" stroke-dasharray="3,3" />
                 <line x1="45" y1="65" x2="400" y2="65" stroke="#e2e8f0" stroke-dasharray="3,3" />
