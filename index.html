@@ -59,7 +59,7 @@
       <div class="topbar-brand">
         <div class="brand-dot"></div>
         <div>
-          <span class="brand-title">ANILLO VIAL PERIFÉRICO &mdash; VISOR WEBGIS EJECUTIVO</span>
+          <span class="brand-title">ANILLO VIAL PERIFÉRICO &mdash; VISOR WEBGIS</span>
           <span class="brand-sub">34.8 km &bull; 12 Distritos (Lima y Callao) &bull; Inversión US$ 3,400M &bull; Corte: 27/11/2026</span>
         </div>
       </div>
@@ -67,7 +67,7 @@
       <div class="topbar-actions">
         <div class="visit-pill" title="Visitas registradas en tiempo real">
           <span class="pulse-green"></span>
-          <span>Visitas: <strong id="visit-counter">...</strong></span>
+          <span class="visit-text">Visitas: <strong id="visit-counter">...</strong></span>
         </div>
 
         <button id="btn-open-buzon" class="btn-topbar-icon" title="Abrir Buzón Ejecutivo de Contacto">
@@ -101,9 +101,9 @@
           <button class="tramo-btn t3-pill" data-tramo="III"><span class="pill-dot" style="background:#0284c7"></span> Tramo III (11.0 km)</button>
         </div>
 
-        <!-- CONTROL FLOTANTE DE CAPAS DINÁMICAS (INICIA SOLO CON TRAMOS ENCENDIDOS) -->
-        <aside class="layers-card">
-          <div class="layers-header">
+        <!-- CONTROL FLOTANTE DE CAPAS DINÁMICAS -->
+        <aside id="layers-card" class="layers-card">
+          <div class="layers-header" id="layers-header-bar">
             <span>Capas del Proyecto</span>
             <button id="toggle-layers" title="Minimizar/Expandir">&minus;</button>
           </div>
@@ -117,7 +117,7 @@
             <label class="layer-item"><input type="checkbox" data-layer="derechoVia" /><span class="swatch" style="background:#8b5cf6; opacity:.65"></span> Derecho de Vía (R.M. 869-2025)</label>
             <label class="layer-item"><input type="checkbox" data-layer="ivd" /><span class="ico-legend" style="background:#fef08a; color:#854d0e;">IV</span> Intercambios Viales (12)</label>
             <label class="layer-item"><input type="checkbox" data-layer="bypass" /><span class="ico-legend" style="background:#fee2e2; color:#991b1b;">BP</span> Pasos a Desnivel / Bypass (24)</label>
-            <label class="layer-item"><input type="checkbox" data-layer="tuneles" /><span class="ico-legend" style="background:#e2e8f0; color:#0f172a;">TN</span> Túneles Tramo II (4.22 km)</label>
+            <label class="layer-item"><input type="checkbox" data-layer="tuneles" /><span class="ico-legend" style="background:#334155; color:#ffffff;">TN</span> Túneles Tramo II (4.22 km)</label>
             <label class="layer-item"><input type="checkbox" data-layer="viaducto" /><span class="ico-legend" style="background:#fce7f3; color:#9d174d;">VD</span> Viaducto Av. El Sol (1.41 km)</label>
             <label class="layer-item"><input type="checkbox" data-layer="peajes" /><span class="ico-legend" style="background:#e0f2fe; color:#075985;">PJ</span> Estaciones de Peaje (5)</label>
             <label class="layer-item"><input type="checkbox" data-layer="cruces" /><span class="ico-legend" style="background:#ccfbf1; color:#115e59;">CR</span> Cruces Especiales (Río/FFCC)</label>
@@ -204,7 +204,7 @@
           </div>
         </div>
 
-        <!-- TAB 2: TRAMOS Y PREDIOS (VISUAL: GRÁFICOS + TABLA COMPACTA) -->
+        <!-- TAB 2: TRAMOS Y PREDIOS -->
         <div id="tab-tramos" class="tab-content">
           <div class="card-section">
             <h3>Distribución de Longitud (34.8 km) y Plazos de Obra</h3>
@@ -261,7 +261,7 @@
           </div>
         </div>
 
-        <!-- TAB 3: BENEFICIOS POR DISTRITO (TARJETAS INFOGRÁFICAS CREATIVAS) -->
+        <!-- TAB 3: BENEFICIOS POR DISTRITO -->
         <div id="tab-distrito" class="tab-content">
           <div class="district-selector-box">
             <label for="district-select">Seleccione un distrito o píquelo en el mapa:</label>
@@ -281,12 +281,10 @@
             </select>
           </div>
 
-          <div id="district-benefit-panel" class="district-panel">
-            <!-- Se llena dinámicamente con tarjetas visuales desde app.js -->
-          </div>
+          <div id="district-benefit-panel" class="district-panel"></div>
         </div>
 
-        <!-- TAB 4: GESTIÓN Y PLAZOS (VISUAL + BOTONES DE ESQUEMAS EMERGENTES) -->
+        <!-- TAB 4: GESTIÓN Y PLAZOS -->
         <div id="tab-simulador" class="tab-content">
           <div class="card-section">
             <h3>Flujo Visual de Gestión Predial e Interferencias</h3>
@@ -298,9 +296,7 @@
               <option value="saneamiento">Interferencias &mdash; Saneamiento / Energía</option>
             </select>
 
-            <div id="sim-visual-timeline" class="timeline-flow">
-              <!-- Línea de tiempo gráfica generada desde app.js -->
-            </div>
+            <div id="sim-visual-timeline" class="timeline-flow"></div>
           </div>
 
           <div class="card-section">
@@ -522,7 +518,6 @@
             Más allá de constituir una vía rápida de circunvalación, el proyecto ha sido diseñado bajo un concepto de <strong>corredor multimodal e inteligente</strong> que transforma la productividad urbana, logística y ambiental de Lima y Callao:
           </p>
 
-          <!-- GRÁFICO 3: SINERGIA MULTIMODAL E IMPACTOS -->
           <div class="chart-card" style="margin-bottom: 18px;">
             <h4>Gráfico 3: Ecosistema de Articulación Multimodal y Beneficios Urbanos del AVP</h4>
             <p class="chart-sub">Conexión transversal con los principales nodos logísticos, portuarios, aeroportuarios y de transporte masivo</p>
@@ -592,7 +587,6 @@
             </table>
           </div>
 
-          <!-- GRÁFICO 4: FLUJO DE LIBERACIÓN DE ÁREAS -->
           <div class="chart-card">
             <h4>Gráfico 4: Flujo Metodológico de Liberación de Áreas y Gestión Social (Cláusula 6.29 - PAP)</h4>
             <p class="chart-sub">Secuencia operativa bajo el TUO del D. Leg. N.° 1192 y estándares socioambientales BID / Banco Mundial</p>
