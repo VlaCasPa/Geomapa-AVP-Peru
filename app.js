@@ -196,9 +196,11 @@ const ESCENARIOS_GESTION = {
   }
 };
 
-// 4. INICIALIZACIÓN DE MAPA CON PANES DE ORDENAMIENTO ESTRICTO
+// 4. INICIALIZACIÓN DE MAPA, CAPAS BASE Y BUSCADOR DE ESTRUCTURAS
 let map;
+let tileGray, tileSat;
 const layerGroups = {};
+const searchIndex = [];
 const DISTRITOS_OBJETIVO = new Set(Object.keys(BENEFICIOS_DISTRITOS));
 
 function normalizarDistrito(nombre) {
@@ -218,6 +220,22 @@ function crearIconoSVG(texto, bg, color, size = 24) {
   });
 }
 
+function registrarEnBuscador(label, latlng, layerKey, marker) {
+  searchIndex.push({ label, latlng, layerKey, marker });
+  const dl = document.getElementById("struct-datalist");
+  if (dl) {
+    const opt = document.createElement("option");
+    opt.value = label;
+    dl.appendChild(opt);
+  }
+}
+
+function resaltarTarjetaTramo(tramoId) {
+  document.querySelectorAll(".tv-row").forEach(r => r.classList.remove("active-highlight"));
+  const target = document.getElementById(`card-tramo-${tramoId}`);
+  if (target) target.classList.add("active-highlight");
+}
+
 function initMap() {
   map = L.map("map", { zoomControl: true }).setView([-12.015, -77.025], 11);
 
@@ -233,27 +251,55 @@ function initMap() {
   map.createPane("paneEstructuras");
   map.getPane("paneEstructuras").style.zIndex = 620;
 
-  L.tileLayer("https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
+  // Mapas base Google: Gris suave y Ortofoto/Satélite calibrada
+  tileGray = L.tileLayer("https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
     attribution: "&copy; Google Maps | Geoportal AVP - Ing. Vladimir Casas",
     maxZoom: 20,
     className: "google-gray-tiles"
   }).addTo(map);
 
-  cargarLinea("tramo1", "data/TRAZO TRAMO I.geojson", "#f59e0b", "Tramo I (8.7 km) — Callao a Panamericana Norte", "Tramo 1 • 8.7 km", "lbl-t1", true);
-  cargarLinea("tramo2", "data/TRAZO TRAMO II.geojson", "#ea580c", "Tramo II (15.1 km) — Panamericana Norte a Ramiro Prialé", "Tramo 2 • 15.1 km", "lbl-t2", true);
-  cargarLinea("tramo3", "data/TRAZO TRAMO III.geojson", "#0284c7", "Tramo III (11.0 km) — Ramiro Prialé a Circunvalación", "Tramo 3 • 11.0 km", "lbl-t3", true);
+  tileSat = L.tileLayer("https://mt1.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}", {
+    attribution: "&copy; Google Satélite | Geoportal AVP - Ing. Vladimir Casas",
+    maxZoom: 20,
+    className: "google-sat-tiles"
+  });
 
+  // 3 Ejes troncales activos al inicio (con sincronización al panel derecho)
+  cargarLinea("tramo1", "I", "data/TRAZO TRAMO I.geojson", "#f59e0b", "Tramo I (8.7 km) — Callao a Panamericana Norte", "Tramo 1 • 8.7 km", "lbl-t1", true);
+  cargarLinea("tramo2", "II", "data/TRAZO TRAMO II.geojson", "#ea580c", "Tramo II (15.1 km) — Panamericana Norte a Ramiro Prialé", "Tramo 2 • 15.1 km", "lbl-t2", true);
+  cargarLinea("tramo3", "III", "data/TRAZO TRAMO III.geojson", "#0284c7", "Tramo III (11.0 km) — Ramiro Prialé a Circunvalación", "Tramo 3 • 11.0 km", "lbl-t3", true);
+
+  // Capas secundarias apagadas por defecto
   cargarDistritos(false);
-  cargarPoligono("derechoVia", "data/DERECHO DE VIA.geojson", { color: "#7c3aed", weight: 1.5, fillColor: "#8b5cf6", fillOpacity: 0.36 }, "Derecho de Vía Oficial (R.M. N.° 869-2025-MTC/01.02)", false);
+  // Derecho de vía pastel suave (#c4b5fd) para que sea referencial y no sobresalga
+  cargarPoligono("derechoVia", "data/DERECHO DE VIA.geojson", {
+    color: "#8b5cf6",
+    weight: 1.2,
+    dashArray: "4,3",
+    fillColor: "#c4b5fd",
+    fillOpacity: 0.24
+  }, "Derecho de Vía Referencial (R.M. N.° 869-2025-MTC/01.02)", false);
+
   cargarPuntos("ivd", "data/INTERCAMBIOS VIALES.geojson", "IV", "#facc15", "#713f12", "Intercambio Vial (IVD)", false);
   cargarPuntos("bypass", "data/PASO DESNIVEL.geojson", "BP", "#ef4444", "#ffffff", "Paso a Desnivel (Bypass)", false);
   cargarTuneles("tuneles", "data/TUNELES_Points.geojson", false);
   cargarPuntos("viaducto", "data/VIADUCTO.geojson", "VD", "#ec4899", "#ffffff", "Viaducto Av. El Sol (1,412 m)", false);
   cargarPuntos("peajes", "data/PEAJES.geojson", "PJ", "#0284c7", "#ffffff", "Estación de Peaje", false);
   cargarPuntos("cruces", "data/CRUCES.geojson", "CR", "#0d9488", "#ffffff", "Cruce Especial (Río / FFCC)", false);
+
+  // Control inteligente de densidad por Zoom (oculta Bypass en zoom < 12 para no saturar vista macro)
+  map.on("zoomend", () => {
+    const chkBypass = document.querySelector("input[data-layer='bypass']");
+    if (!chkBypass || !chkBypass.checked || !layerGroups.bypass) return;
+    if (map.getZoom() < 12) {
+      if (map.hasLayer(layerGroups.bypass)) map.removeLayer(layerGroups.bypass);
+    } else {
+      if (!map.hasLayer(layerGroups.bypass)) map.addLayer(layerGroups.bypass);
+    }
+  });
 }
 
-async function cargarLinea(key, url, color, titulo, etiquetaCorta, claseLabel, visibleInicial) {
+async function cargarLinea(key, tramoId, url, color, titulo, etiquetaCorta, claseLabel, visibleInicial) {
   try {
     const res = await fetch(url);
     const data = await res.json();
@@ -267,6 +313,10 @@ async function cargarLinea(key, url, color, titulo, etiquetaCorta, claseLabel, v
             <span>Autopista urbana expresa de 3 carriles por sentido + vías laterales libres de peaje.</span>
           </div>
         `);
+        lyr.on("click", () => {
+          activarTab("tramos");
+          resaltarTarjetaTramo(tramoId);
+        });
       }
     });
 
@@ -325,16 +375,26 @@ async function cargarPuntos(key, url, sigla, bg, color, categoria, visibleInicia
         const tramo = p["TRAMO"] || "";
         const pk = p["KILOMETRAJE (PK)"] || (p["PK INICIO"] ? `${p["PK INICIO"]} al ${p["PK FIN"]}` : "");
         const longM = p["LONGITUD (m)"] ? `<br/><strong>Longitud:</strong> ${p["LONGITUD (m)"]} m` : "";
+        const labelBuscador = `${sigla}: ${nombre}${pk ? ` (km ${pk})` : ""}`;
+
         lyr.bindTooltip(`${nombre} ${pk ? `(km ${pk})` : ""}`, { direction: "top", offset: [0, -10] });
         lyr.bindPopup(`
-          <div style="font-family:Inter,sans-serif;font-size:12.5px;">
+          <div style="font-family:Inter,sans-serif;font-size:12.5px;max-width:250px;">
             <span style="font-size:10px;font-weight:800;color:#0284c7;text-transform:uppercase;">${categoria}</span><br/>
             <strong style="font-size:13.5px;color:#0f172a;">${nombre}</strong>
             ${tramo ? `<br/><strong>Tramo:</strong> Tramo ${tramo}` : ""}
             ${pk ? `<br/><strong>Progresiva (PK):</strong> km ${pk}` : ""}
             ${longM}
+            <div style="margin-top:6px;padding-top:5px;border-top:1px dashed #cbd5e1;font-size:10.5px;color:#64748b;">
+              Ubicación referencial; corroborar con los planos del <strong>EDI</strong>.
+            </div>
           </div>
         `);
+
+        if (feature.geometry?.coordinates) {
+          const [lng, lat] = feature.geometry.coordinates;
+          registrarEnBuscador(labelBuscador, [lat, lng], key, lyr);
+        }
       }
     });
     if (visibleInicial) layer.addTo(map);
@@ -360,12 +420,15 @@ async function cargarTuneles(key, url, visibleInicial) {
         const pk = p["KILOMETRAJE (PK)"] || "";
         const longM = p["LONGITUD (m)"] || "";
         lyr.bindPopup(`
-          <div style="font-family:Inter,sans-serif;font-size:12.5px;">
+          <div style="font-family:Inter,sans-serif;font-size:12.5px;max-width:255px;">
             <span style="font-size:10px;font-weight:800;color:#ea580c;">OBRA SUBTERRÁNEA &bull; TRAMO II</span><br/>
             <strong style="font-size:13.5px;color:#0f172a;">${nombre}</strong><br/>
             ${pk ? `<strong>Progresiva:</strong> km ${pk}<br/>` : ""}
             ${longM ? `<strong>Longitud total:</strong> ${longM} metros<br/>` : ""}
-            <span>Equipado con ventilación longitudinal, iluminación adaptativa, postes SOS y detección automática de incidentes.</span>
+            <span>Ventilación longitudinal, iluminación adaptativa y postes SOS.</span>
+            <div style="margin-top:6px;padding-top:5px;border-top:1px dashed #cbd5e1;font-size:10.5px;color:#64748b;">
+              Trazo y portales referenciales; corroborar con planos del <strong>EDI</strong>.
+            </div>
           </div>
         `);
       }
@@ -374,13 +437,16 @@ async function cargarTuneles(key, url, visibleInicial) {
     const t1Coords = [[-11.974414, -77.039031], [-11.978363, -77.021086]];
     const t2Coords = [[-11.989201, -76.973580], [-12.000910, -76.964178]];
 
-    const tunel1Sombra = L.polyline(t1Coords, { pane: "paneDerechoVia", color: "#334155", weight: 15, opacity: 0.55 });
+    const tunel1Sombra = L.polyline(t1Coords, { pane: "paneDerechoVia", color: "#334155", weight: 15, opacity: 0.52 });
     const tunel1Eje = L.polyline(t1Coords, { pane: "paneEstructuras", color: "#0f172a", weight: 4, dashArray: "7, 6", opacity: 0.95 })
-      .bindPopup("<strong>Túnel 1 (L: 2,285 m)</strong><br/>km 11+195 al km 13+480 (Comas &ndash; San Juan de Lurigancho)");
+      .bindPopup("<strong>Túnel 1 (L: 2,285 m)</strong><br/>km 11+195 al km 13+480 (Comas &ndash; SJL)<br/><small>Ubicación referencial; corroborar con planos del EDI.</small>");
 
-    const tunel2Sombra = L.polyline(t2Coords, { pane: "paneDerechoVia", color: "#334155", weight: 15, opacity: 0.55 });
+    const tunel2Sombra = L.polyline(t2Coords, { pane: "paneDerechoVia", color: "#334155", weight: 15, opacity: 0.52 });
     const tunel2Eje = L.polyline(t2Coords, { pane: "paneEstructuras", color: "#0f172a", weight: 4, dashArray: "7, 6", opacity: 0.95 })
-      .bindPopup("<strong>Túnel 2 (L: 1,935 m)</strong><br/>km 19+202 al km 21+138 (San Juan de Lurigancho &ndash; Lurigancho)");
+      .bindPopup("<strong>Túnel 2 (L: 1,935 m)</strong><br/>km 19+202 al km 21+138 (SJL &ndash; Lurigancho)<br/><small>Ubicación referencial; corroborar con planos del EDI.</small>");
+
+    registrarEnBuscador("TN: Túnel 1 (km 11+195 al 13+480 - 2,285 m)", t1Coords[0], "tuneles", tunel1Eje);
+    registrarEnBuscador("TN: Túnel 2 (km 19+202 al 21+138 - 1,935 m)", t2Coords[0], "tuneles", tunel2Eje);
 
     const portales = [
       { coords: t1Coords[0], txt: "🚇 Inicio Túnel 1" },
@@ -530,38 +596,58 @@ function abrirEsquemaModal(tipo) {
   modal.classList.remove("hidden");
 }
 
-// 6. FIREBASE AUTH, CONTADOR DE VISITAS Y FEEDBACK
-async function registrarAccesoUsuario(user) {
-  const perfil = document.getElementById("visitor-role")?.value || "No especificado";
-  const userRef = doc(db, "usuarios", user.uid);
-  const snap = await getDoc(userRef);
+// 6. FIREBASE AUTH, MODO INVITADO, CONTADOR DE VISITAS Y FEEDBACK
+function entrarAlPortal(user) {
+  document.getElementById("auth-modal").classList.add("hidden");
+  document.getElementById("app-shell").classList.remove("hidden");
 
-  if (!snap.exists()) {
-    await setDoc(userRef, {
-      uid: user.uid,
-      nombre: user.displayName,
-      email: user.email,
-      perfil_profesional: perfil,
-      primer_acceso: serverTimestamp(),
-      ultimo_acceso: serverTimestamp(),
-      visitas: 1
-    });
+  if (user) {
+    document.getElementById("user-name").textContent = user.displayName?.split(" ")[0] || "Profesional";
+    document.getElementById("user-photo").src = user.photoURL || "https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg";
   } else {
-    await updateDoc(userRef, {
-      ultimo_acceso: serverTimestamp(),
-      visitas: increment(1)
-    });
+    document.getElementById("user-name").textContent = "Invitado";
+    document.getElementById("user-photo").src = "https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg";
   }
 
-  const metricRef = doc(db, "metricas", "global");
-  const metricSnap = await getDoc(metricRef);
-  if (!metricSnap.exists()) {
-    await setDoc(metricRef, { total_visitas: 1 });
-    document.getElementById("visit-counter").textContent = "1";
-  } else {
-    await updateDoc(metricRef, { total_visitas: increment(1) });
-    const updated = await getDoc(metricRef);
-    document.getElementById("visit-counter").textContent = updated.data().total_visitas;
+  if (!map) initMap();
+  setTimeout(() => map.invalidateSize(), 200);
+}
+
+async function registrarAccesoUsuario(user) {
+  try {
+    const perfil = document.getElementById("visitor-role")?.value || "No especificado";
+    const userRef = doc(db, "usuarios", user.uid);
+    const snap = await getDoc(userRef);
+
+    if (!snap.exists()) {
+      await setDoc(userRef, {
+        uid: user.uid,
+        nombre: user.displayName,
+        email: user.email,
+        perfil_profesional: perfil,
+        primer_acceso: serverTimestamp(),
+        ultimo_acceso: serverTimestamp(),
+        visitas: 1
+      });
+    } else {
+      await updateDoc(userRef, {
+        ultimo_acceso: serverTimestamp(),
+        visitas: increment(1)
+      });
+    }
+
+    const metricRef = doc(db, "metricas", "global");
+    const metricSnap = await getDoc(metricRef);
+    if (!metricSnap.exists()) {
+      await setDoc(metricRef, { total_visitas: 1 });
+      document.getElementById("visit-counter").textContent = "1";
+    } else {
+      await updateDoc(metricRef, { total_visitas: increment(1) });
+      const updated = await getDoc(metricRef);
+      document.getElementById("visit-counter").textContent = updated.data().total_visitas;
+    }
+  } catch (e) {
+    console.warn("Métricas no disponibles en este modo:", e);
   }
 }
 
@@ -573,38 +659,88 @@ document.addEventListener("DOMContentLoaded", () => {
   mostrarBeneficioDistrito("CALLAO");
   actualizarSimulador();
 
-  // En celulares (<= 640px), iniciar con leyenda de capas colapsada para despejar el mapa
   if (window.innerWidth <= 640) {
     document.getElementById("layers-body").classList.add("hidden");
     document.getElementById("toggle-layers").textContent = "+";
   }
 
+  // Botón Google Sign-In
   document.getElementById("btn-google-login").addEventListener("click", async () => {
     try {
       await signInWithPopup(auth, provider);
     } catch (err) {
       const errBox = document.getElementById("auth-error");
-      errBox.textContent = "No se pudo completar el acceso con Google. Verifica que el dominio esté autorizado.";
+      errBox.textContent = "Si estás en el navegador de LinkedIn/Instagram, usa 'Explorar como Invitado' abajo.";
       errBox.classList.remove("hidden");
     }
   });
 
-  document.getElementById("btn-logout").addEventListener("click", () => signOut(auth));
+  // Botón Acceso Invitado (Vista Rápida)
+  document.getElementById("btn-guest-login").addEventListener("click", () => {
+    sessionStorage.setItem("avp_guest_mode", "1");
+    entrarAlPortal(null);
+    document.getElementById("visit-counter").textContent = "Activo";
+    registrarEvento("acceso_invitado", {});
+  });
+
+  document.getElementById("btn-logout").addEventListener("click", () => {
+    sessionStorage.removeItem("avp_guest_mode");
+    if (auth.currentUser) signOut(auth);
+    else {
+      document.getElementById("auth-modal").classList.remove("hidden");
+      document.getElementById("app-shell").classList.add("hidden");
+    }
+  });
 
   onAuthStateChanged(auth, async (user) => {
     if (user) {
-      document.getElementById("auth-modal").classList.add("hidden");
-      document.getElementById("app-shell").classList.remove("hidden");
-      document.getElementById("user-name").textContent = user.displayName?.split(" ")[0] || "Profesional";
-      document.getElementById("user-photo").src = user.photoURL || "https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg";
-
-      if (!map) initMap();
-      setTimeout(() => map.invalidateSize(), 200);
+      entrarAlPortal(user);
       await registrarAccesoUsuario(user);
+    } else if (sessionStorage.getItem("avp_guest_mode") === "1") {
+      entrarAlPortal(null);
+      document.getElementById("visit-counter").textContent = "Activo";
     } else {
       document.getElementById("auth-modal").classList.remove("hidden");
       document.getElementById("app-shell").classList.add("hidden");
     }
+  });
+
+  // Conmutador Mapa Gris vs Satélite
+  const btnGray = document.getElementById("btn-base-gray");
+  const btnSat = document.getElementById("btn-base-sat");
+  btnGray.addEventListener("click", () => {
+    btnGray.classList.add("active");
+    btnSat.classList.remove("active");
+    if (map && tileSat) map.removeLayer(tileSat);
+    if (map && tileGray && !map.hasLayer(tileGray)) tileGray.addTo(map);
+  });
+  btnSat.addEventListener("click", () => {
+    btnSat.classList.add("active");
+    btnGray.classList.remove("active");
+    if (map && tileGray) map.removeLayer(tileGray);
+    if (map && tileSat && !map.hasLayer(tileSat)) tileSat.addTo(map);
+  });
+
+  // Buscador rápido de estructuras
+  const searchInput = document.getElementById("struct-search-input");
+  searchInput.addEventListener("change", () => {
+    const val = searchInput.value.trim().toLowerCase();
+    if (!val) return;
+    const found = searchIndex.find(item => item.label.toLowerCase() === val || item.label.toLowerCase().includes(val));
+    if (found && map) {
+      const chk = document.querySelector(`input[data-layer='${found.layerKey}']`);
+      if (chk && !chk.checked) {
+        chk.checked = true;
+        if (layerGroups[found.layerKey]) map.addLayer(layerGroups[found.layerKey]);
+      }
+      map.setView(found.latlng, 15);
+      if (found.marker && found.marker.openPopup) {
+        setTimeout(() => found.marker.openPopup(), 300);
+      }
+    }
+  });
+  document.getElementById("btn-clear-search").addEventListener("click", () => {
+    searchInput.value = "";
   });
 
   document.querySelectorAll(".tab-btn").forEach(btn => {
@@ -618,15 +754,19 @@ document.addEventListener("DOMContentLoaded", () => {
       const t = btn.dataset.tramo;
       if (t === "ALL") {
         map.setView([-12.015, -77.025], 11);
+        document.querySelectorAll(".tv-row").forEach(r => r.classList.remove("active-highlight"));
       } else if (t === "I" && layerGroups.tramo1) {
         map.fitBounds(layerGroups.tramo1.getBounds(), { padding: [35, 35] });
         activarTab("tramos");
+        resaltarTarjetaTramo("I");
       } else if (t === "II" && layerGroups.tramo2) {
         map.fitBounds(layerGroups.tramo2.getBounds(), { padding: [35, 35] });
         activarTab("tramos");
+        resaltarTarjetaTramo("II");
       } else if (t === "III" && layerGroups.tramo3) {
         map.fitBounds(layerGroups.tramo3.getBounds(), { padding: [35, 35] });
         activarTab("tramos");
+        resaltarTarjetaTramo("III");
       }
     });
   });
@@ -635,8 +775,14 @@ document.addEventListener("DOMContentLoaded", () => {
     chk.addEventListener("change", () => {
       const lyr = layerGroups[chk.dataset.layer];
       if (!lyr) return;
-      if (chk.checked) map.addLayer(lyr);
-      else map.removeLayer(lyr);
+      if (chk.checked) {
+        if (chk.dataset.layer === "bypass" && map.getZoom() < 12) {
+          map.setZoom(12);
+        }
+        map.addLayer(lyr);
+      } else {
+        map.removeLayer(lyr);
+      }
     });
   });
 
@@ -654,10 +800,17 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btn-chart-predial").addEventListener("click", () => abrirEsquemaModal("predial"));
   document.getElementById("close-schema").addEventListener("click", () => document.getElementById("schema-modal").classList.add("hidden"));
 
+  // Modal Guía y Glosario
+  const guideModal = document.getElementById("guide-modal");
+  document.getElementById("btn-open-guide").addEventListener("click", () => guideModal.classList.remove("hidden"));
+  document.getElementById("close-guide").addEventListener("click", () => guideModal.classList.add("hidden"));
+
+  // Modal Buzón Ejecutivo
   const buzonModal = document.getElementById("buzon-modal");
   document.getElementById("btn-open-buzon").addEventListener("click", () => buzonModal.classList.remove("hidden"));
   document.getElementById("close-buzon").addEventListener("click", () => buzonModal.classList.add("hidden"));
 
+  // Módulo de Lectura: Sustento Técnico
   const sustentoModal = document.getElementById("sustento-modal");
   document.getElementById("btn-sustento").addEventListener("click", () => {
     sustentoModal.classList.remove("hidden");
@@ -670,6 +823,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key === "Escape") {
       sustentoModal.classList.add("hidden");
       buzonModal.classList.add("hidden");
+      guideModal.classList.add("hidden");
       document.getElementById("schema-modal").classList.add("hidden");
     }
   });
@@ -678,12 +832,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const txt = document.getElementById("feedback-text").value.trim();
     const status = document.getElementById("feedback-status");
     if (!txt) return;
+    if (!auth.currentUser) {
+      status.textContent = "Para enviar mensajes al buzón, inicia sesión con Google o contáctame vía LinkedIn.";
+      return;
+    }
     try {
       const user = auth.currentUser;
       await addDoc(collection(db, "comentarios"), {
-        uid: user?.uid || "anon",
-        nombre: user?.displayName || "Invitado",
-        email: user?.email || "",
+        uid: user.uid,
+        nombre: user.displayName || "Profesional",
+        email: user.email || "",
         mensaje: txt,
         fecha: serverTimestamp()
       });
