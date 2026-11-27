@@ -20,7 +20,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
-// 2. BENEFICIOS OPERATIVOS POR DISTRITO (CON COLORES PASTEL DE TRAMO E ÍCONOS)
+// 2. BENEFICIOS OPERATIVOS POR DISTRITO
 const BENEFICIOS_DISTRITOS = {
   "CALLAO": {
     titulo: "Provincia Constitucional del Callao",
@@ -156,7 +156,7 @@ const BENEFICIOS_DISTRITOS = {
   }
 };
 
-// 3. ESCENARIOS DE GESTIÓN PREDIAL E INTERFERENCIAS (LÍNEA DE TIEMPO GRÁFICA)
+// 3. ESCENARIOS DE GESTIÓN PREDIAL E INTERFERENCIAS
 const ESCENARIOS_GESTION = {
   trato_directo: {
     plazo: "Plazo Referencial: 4 a 6 meses (Meta Tramo I: Mes 24 | Tramo III: Mes 28)",
@@ -196,7 +196,7 @@ const ESCENARIOS_GESTION = {
   }
 };
 
-// 4. INICIALIZACIÓN DE MAPA (GOOGLE MAPS GRIS + SOLO TRAMOS ACTIVOS AL INICIO)
+// 4. INICIALIZACIÓN DE MAPA CON PANES DE ORDENAMIENTO ESTRICTO
 let map;
 const layerGroups = {};
 const DISTRITOS_OBJETIVO = new Set(Object.keys(BENEFICIOS_DISTRITOS));
@@ -221,21 +221,34 @@ function crearIconoSVG(texto, bg, color, size = 24) {
 function initMap() {
   map = L.map("map", { zoomControl: true }).setView([-12.015, -77.025], 11);
 
-  // Mapa base Google Maps en escala de grises limpia (sin marcas de agua)
+  // Jerarquía estricta de capas (Panes)
+  map.createPane("paneDistritos");
+  map.getPane("paneDistritos").style.zIndex = 350;
+
+  map.createPane("paneDerechoVia");
+  map.getPane("paneDerechoVia").style.zIndex = 410; // Encima de Google Maps, debajo de los tramos
+
+  map.createPane("paneTramos");
+  map.getPane("paneTramos").style.zIndex = 450; // Siempre visible encima del Derecho de Vía
+
+  map.createPane("paneEstructuras");
+  map.getPane("paneEstructuras").style.zIndex = 620;
+
+  // Mapa base Google Maps en escala de grises
   L.tileLayer("https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
     attribution: "&copy; Google Maps | Geoportal AVP - Ing. Vladimir Casas",
     maxZoom: 20,
     className: "google-gray-tiles"
   }).addTo(map);
 
-  // Cargar SOLO los 3 ejes troncales activos al iniciar + etiquetas de tramo
+  // 3 Ejes troncales activos al inicio
   cargarLinea("tramo1", "data/TRAZO TRAMO I.geojson", "#f59e0b", "Tramo I (8.7 km) — Callao a Panamericana Norte", "Tramo 1 • 8.7 km", "lbl-t1", true);
   cargarLinea("tramo2", "data/TRAZO TRAMO II.geojson", "#ea580c", "Tramo II (15.1 km) — Panamericana Norte a Ramiro Prialé", "Tramo 2 • 15.1 km", "lbl-t2", true);
   cargarLinea("tramo3", "data/TRAZO TRAMO III.geojson", "#0284c7", "Tramo III (11.0 km) — Ramiro Prialé a Circunvalación", "Tramo 3 • 11.0 km", "lbl-t3", true);
 
-  // Precargar capas secundarias APAGADAS por defecto (se encienden al marcar su checkbox)
+  // Capas secundarias apagadas por defecto
   cargarDistritos(false);
-  cargarPoligono("derechoVia", "data/DERECHO DE VIA.geojson", { color: "#7c3aed", weight: 1.5, fillColor: "#8b5cf6", fillOpacity: 0.35 }, "Derecho de Vía Oficial (R.M. N.° 869-2025-MTC/01.02)", false);
+  cargarPoligono("derechoVia", "data/DERECHO DE VIA.geojson", { color: "#7c3aed", weight: 1.5, fillColor: "#8b5cf6", fillOpacity: 0.36 }, "Derecho de Vía Oficial (R.M. N.° 869-2025-MTC/01.02)", false);
   cargarPuntos("ivd", "data/INTERCAMBIOS VIALES.geojson", "IV", "#facc15", "#713f12", "Intercambio Vial (IVD)", false);
   cargarPuntos("bypass", "data/PASO DESNIVEL.geojson", "BP", "#ef4444", "#ffffff", "Paso a Desnivel (Bypass)", false);
   cargarTuneles("tuneles", "data/TUNELES_Points.geojson", false);
@@ -249,7 +262,8 @@ async function cargarLinea(key, url, color, titulo, etiquetaCorta, claseLabel, v
     const res = await fetch(url);
     const data = await res.json();
     const layer = L.geoJSON(data, {
-      style: { color, weight: 5.5, opacity: 0.95 },
+      pane: "paneTramos",
+      style: { color, weight: 5.5, opacity: 0.96 },
       onEachFeature: (f, lyr) => {
         lyr.bindPopup(`
           <div style="font-family:Inter,sans-serif;font-size:12.5px;">
@@ -260,14 +274,15 @@ async function cargarLinea(key, url, color, titulo, etiquetaCorta, claseLabel, v
       }
     });
 
-    // Agregar etiqueta permanente del Tramo en el centro del trazo
     const center = layer.getBounds().getCenter();
     const labelMarker = L.marker(center, {
+      pane: "paneEstructuras",
       interactive: false,
       icon: L.divIcon({
-        className: "",
+        className: "tramo-label-wrapper",
         html: `<div class="tramo-map-label ${claseLabel}">${etiquetaCorta}</div>`,
-        iconAnchor: [45, 12]
+        iconSize: null,
+        iconAnchor: [55, 14]
       })
     });
 
@@ -285,6 +300,7 @@ async function cargarPoligono(key, url, styleObj, titulo, visibleInicial) {
     const res = await fetch(url);
     const data = await res.json();
     const layer = L.geoJSON(data, {
+      pane: "paneDerechoVia",
       style: styleObj,
       onEachFeature: (f, lyr) => {
         lyr.bindPopup(`<strong>${titulo}</strong><br/>Franja oficial de dominio vial (2,798 vértices WGS84).`);
@@ -302,7 +318,9 @@ async function cargarPuntos(key, url, sigla, bg, color, categoria, visibleInicia
     const res = await fetch(url);
     const data = await res.json();
     const layer = L.geoJSON(data, {
+      pane: "paneEstructuras",
       pointToLayer: (feature, latlng) => L.marker(latlng, {
+        pane: "paneEstructuras",
         icon: crearIconoSVG(sigla, bg, color, 24)
       }),
       onEachFeature: (feature, lyr) => {
@@ -330,13 +348,15 @@ async function cargarPuntos(key, url, sigla, bg, color, categoria, visibleInicia
   }
 }
 
-// Capa especial para Túneles (muestra portales de inicio/fin + línea de trazado subterráneo)
+// Túneles con sombra gris ancha subterránea + portales didácticos de inicio y fin
 async function cargarTuneles(key, url, visibleInicial) {
   try {
     const res = await fetch(url);
     const data = await res.json();
     const ptsLayer = L.geoJSON(data, {
+      pane: "paneEstructuras",
       pointToLayer: (feature, latlng) => L.marker(latlng, {
+        pane: "paneEstructuras",
         icon: crearIconoSVG("🚇", "#0f172a", "#ffffff", 26)
       }),
       onEachFeature: (feature, lyr) => {
@@ -344,7 +364,6 @@ async function cargarTuneles(key, url, visibleInicial) {
         const nombre = p["TUNEL"] || p["NOMBRE"] || "Portal de Túnel (Tramo II)";
         const pk = p["KILOMETRAJE (PK)"] || "";
         const longM = p["LONGITUD (m)"] || "";
-        lyr.bindTooltip(`${nombre} (${longM ? longM + " m" : "Túnel"})`, { direction: "top", offset: [0, -12] });
         lyr.bindPopup(`
           <div style="font-family:Inter,sans-serif;font-size:12.5px;">
             <span style="font-size:10px;font-weight:800;color:#ea580c;">OBRA SUBTERRÁNEA &bull; TRAMO II</span><br/>
@@ -357,16 +376,36 @@ async function cargarTuneles(key, url, visibleInicial) {
       }
     });
 
-    // Trazos esquemáticos entre portal inicio y fin (según TUNELES.xlsx)
-    const tunel1Line = L.polyline([[-11.974414, -77.039031], [-11.978363, -77.021086]], {
-      color: "#0f172a", weight: 7, dashArray: "8, 6", opacity: 0.9
-    }).bindPopup("<strong>Túnel 1 (L: 2,285 m)</strong><br/>km 11+195 al km 13+480 (Comas &ndash; San Juan de Lurigancho)");
+    // Franja gris ancha de sección subterránea debajo del trazo (Túnel 1 y Túnel 2)
+    const t1Coords = [[-11.974414, -77.039031], [-11.978363, -77.021086]];
+    const t2Coords = [[-11.989201, -76.973580], [-12.000910, -76.964178]];
 
-    const tunel2Line = L.polyline([[-11.989201, -76.973580], [-12.000910, -76.964178]], {
-      color: "#0f172a", weight: 7, dashArray: "8, 6", opacity: 0.9
-    }).bindPopup("<strong>Túnel 2 (L: 1,935 m)</strong><br/>km 19+202 al km 21+138 (San Juan de Lurigancho &ndash; Lurigancho/Ramiro Prialé)");
+    const tunel1Sombra = L.polyline(t1Coords, { pane: "paneDerechoVia", color: "#334155", weight: 15, opacity: 0.55 });
+    const tunel1Eje = L.polyline(t1Coords, { pane: "paneEstructuras", color: "#0f172a", weight: 4, dashArray: "7, 6", opacity: 0.95 })
+      .bindPopup("<strong>Túnel 1 (L: 2,285 m)</strong><br/>km 11+195 al km 13+480 (Comas &ndash; San Juan de Lurigancho)");
 
-    const group = L.layerGroup([tunel1Line, tunel2Line, ptsLayer]);
+    const tunel2Sombra = L.polyline(t2Coords, { pane: "paneDerechoVia", color: "#334155", weight: 15, opacity: 0.55 });
+    const tunel2Eje = L.polyline(t2Coords, { pane: "paneEstructuras", color: "#0f172a", weight: 4, dashArray: "7, 6", opacity: 0.95 })
+      .bindPopup("<strong>Túnel 2 (L: 1,935 m)</strong><br/>km 19+202 al km 21+138 (San Juan de Lurigancho &ndash; Lurigancho)");
+
+    // Etiquetas de portal de ingreso y salida
+    const portales = [
+      { coords: t1Coords[0], txt: "🚇 Inicio Túnel 1" },
+      { coords: t1Coords[1], txt: "🚇 Fin Túnel 1 (2,285m)" },
+      { coords: t2Coords[0], txt: "🚇 Inicio Túnel 2" },
+      { coords: t2Coords[1], txt: "🚇 Fin Túnel 2 (1,935m)" }
+    ].map(pt => L.marker(pt.coords, {
+      pane: "paneEstructuras",
+      interactive: false,
+      icon: L.divIcon({
+        className: "tramo-label-wrapper",
+        html: `<div class="tunnel-portal-badge">${pt.txt}</div>`,
+        iconSize: null,
+        iconAnchor: [55, -10]
+      })
+    }));
+
+    const group = L.layerGroup([tunel1Sombra, tunel2Sombra, tunel1Eje, tunel2Eje, ptsLayer, ...portales]);
     if (visibleInicial) group.addTo(map);
     layerGroups[key] = group;
   } catch (e) {
@@ -379,6 +418,7 @@ async function cargarDistritos(visibleInicial) {
     const res = await fetch("data/DISTRITOS DE LIMA Y CALLAO (2).geojson");
     const data = await res.json();
     const layer = L.geoJSON(data, {
+      pane: "paneDistritos",
       filter: (feature) => {
         const nom = normalizarDistrito(feature.properties?.NOMBDIST);
         return DISTRITOS_OBJETIVO.has(nom);
@@ -540,6 +580,12 @@ document.addEventListener("DOMContentLoaded", () => {
   mostrarBeneficioDistrito("CALLAO");
   actualizarSimulador();
 
+  // En celulares (<= 640px), iniciar con leyenda de capas colapsada para despejar el mapa
+  if (window.innerWidth <= 640) {
+    document.getElementById("layers-body").classList.add("hidden");
+    document.getElementById("toggle-layers").textContent = "+";
+  }
+
   document.getElementById("btn-google-login").addEventListener("click", async () => {
     try {
       await signInWithPopup(auth, provider);
@@ -601,26 +647,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  document.getElementById("toggle-layers").addEventListener("click", (e) => {
+  document.getElementById("layers-header-bar").addEventListener("click", () => {
     const body = document.getElementById("layers-body");
+    const btn = document.getElementById("toggle-layers");
     const isHidden = body.classList.toggle("hidden");
-    e.target.textContent = isHidden ? "+" : "−";
+    btn.textContent = isHidden ? "+" : "−";
   });
 
   document.getElementById("district-select").addEventListener("change", (e) => mostrarBeneficioDistrito(e.target.value));
   document.getElementById("sim-tipo").addEventListener("change", actualizarSimulador);
 
-  // Modales de Esquemas Gerenciales
   document.getElementById("btn-chart-cronograma").addEventListener("click", () => abrirEsquemaModal("cronograma"));
   document.getElementById("btn-chart-predial").addEventListener("click", () => abrirEsquemaModal("predial"));
   document.getElementById("close-schema").addEventListener("click", () => document.getElementById("schema-modal").classList.add("hidden"));
 
-  // Modal Buzón Ejecutivo (desde barra superior)
   const buzonModal = document.getElementById("buzon-modal");
   document.getElementById("btn-open-buzon").addEventListener("click", () => buzonModal.classList.remove("hidden"));
   document.getElementById("close-buzon").addEventListener("click", () => buzonModal.classList.add("hidden"));
 
-  // Módulo de Lectura: Sustento Técnico
   const sustentoModal = document.getElementById("sustento-modal");
   document.getElementById("btn-sustento").addEventListener("click", () => {
     sustentoModal.classList.remove("hidden");
