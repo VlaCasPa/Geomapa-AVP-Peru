@@ -193,7 +193,6 @@ function initMap() {
     maxZoom: 19
   }).addTo(map);
 
-  // Cargar capas en orden jerárquico
   cargarDistritos();
   cargarPoligono("derechoVia", "data/DERECHO DE VIA.geojson", { color: "#7c3aed", weight: 1.5, fillColor: "#8b5cf6", fillOpacity: 0.32 }, "Derecho de Vía Oficial (R.M. N.° 869-2025-MTC/01.02)");
   cargarLinea("tramo1", "data/TRAZO TRAMO I.geojson", "#0284c7", "Tramo I (8.7 km) — Callao a Panamericana Norte");
@@ -463,9 +462,23 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("district-select").addEventListener("change", (e) => mostrarBeneficioDistrito(e.target.value));
   document.getElementById("sim-tipo").addEventListener("change", actualizarSimulador);
 
-  // Modal Metodología
-  document.getElementById("btn-methodology").addEventListener("click", () => document.getElementById("method-modal").classList.remove("hidden"));
-  document.getElementById("close-method").addEventListener("click", () => document.getElementById("method-modal").classList.add("hidden"));
+  // MÓDULO DE LECTURA: SUSTENTO TÉCNICO (ABRIR / CERRAR / IMPRIMIR / ESC)
+  const sustentoModal = document.getElementById("sustento-modal");
+  document.getElementById("btn-sustento").addEventListener("click", () => {
+    sustentoModal.classList.remove("hidden");
+    registrarEvento("abrir_sustento_tecnico", {});
+  });
+  document.getElementById("btn-close-sustento").addEventListener("click", () => {
+    sustentoModal.classList.add("hidden");
+  });
+  document.getElementById("btn-print-sustento").addEventListener("click", () => {
+    window.print();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !sustentoModal.classList.contains("hidden")) {
+      sustentoModal.classList.add("hidden");
+    }
+  });
 
   // Buzón de Feedback en Firestore
   document.getElementById("btn-send-feedback").addEventListener("click", async () => {
