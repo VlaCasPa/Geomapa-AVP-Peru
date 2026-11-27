@@ -221,32 +221,28 @@ function crearIconoSVG(texto, bg, color, size = 24) {
 function initMap() {
   map = L.map("map", { zoomControl: true }).setView([-12.015, -77.025], 11);
 
-  // Jerarquía estricta de capas (Panes)
   map.createPane("paneDistritos");
   map.getPane("paneDistritos").style.zIndex = 350;
 
   map.createPane("paneDerechoVia");
-  map.getPane("paneDerechoVia").style.zIndex = 410; // Encima de Google Maps, debajo de los tramos
+  map.getPane("paneDerechoVia").style.zIndex = 410;
 
   map.createPane("paneTramos");
-  map.getPane("paneTramos").style.zIndex = 450; // Siempre visible encima del Derecho de Vía
+  map.getPane("paneTramos").style.zIndex = 450;
 
   map.createPane("paneEstructuras");
   map.getPane("paneEstructuras").style.zIndex = 620;
 
-  // Mapa base Google Maps en escala de grises
   L.tileLayer("https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
     attribution: "&copy; Google Maps | Geoportal AVP - Ing. Vladimir Casas",
     maxZoom: 20,
     className: "google-gray-tiles"
   }).addTo(map);
 
-  // 3 Ejes troncales activos al inicio
   cargarLinea("tramo1", "data/TRAZO TRAMO I.geojson", "#f59e0b", "Tramo I (8.7 km) — Callao a Panamericana Norte", "Tramo 1 • 8.7 km", "lbl-t1", true);
   cargarLinea("tramo2", "data/TRAZO TRAMO II.geojson", "#ea580c", "Tramo II (15.1 km) — Panamericana Norte a Ramiro Prialé", "Tramo 2 • 15.1 km", "lbl-t2", true);
   cargarLinea("tramo3", "data/TRAZO TRAMO III.geojson", "#0284c7", "Tramo III (11.0 km) — Ramiro Prialé a Circunvalación", "Tramo 3 • 11.0 km", "lbl-t3", true);
 
-  // Capas secundarias apagadas por defecto
   cargarDistritos(false);
   cargarPoligono("derechoVia", "data/DERECHO DE VIA.geojson", { color: "#7c3aed", weight: 1.5, fillColor: "#8b5cf6", fillOpacity: 0.36 }, "Derecho de Vía Oficial (R.M. N.° 869-2025-MTC/01.02)", false);
   cargarPuntos("ivd", "data/INTERCAMBIOS VIALES.geojson", "IV", "#facc15", "#713f12", "Intercambio Vial (IVD)", false);
@@ -348,7 +344,6 @@ async function cargarPuntos(key, url, sigla, bg, color, categoria, visibleInicia
   }
 }
 
-// Túneles con sombra gris ancha subterránea + portales didácticos de inicio y fin
 async function cargarTuneles(key, url, visibleInicial) {
   try {
     const res = await fetch(url);
@@ -376,7 +371,6 @@ async function cargarTuneles(key, url, visibleInicial) {
       }
     });
 
-    // Franja gris ancha de sección subterránea debajo del trazo (Túnel 1 y Túnel 2)
     const t1Coords = [[-11.974414, -77.039031], [-11.978363, -77.021086]];
     const t2Coords = [[-11.989201, -76.973580], [-12.000910, -76.964178]];
 
@@ -388,7 +382,6 @@ async function cargarTuneles(key, url, visibleInicial) {
     const tunel2Eje = L.polyline(t2Coords, { pane: "paneEstructuras", color: "#0f172a", weight: 4, dashArray: "7, 6", opacity: 0.95 })
       .bindPopup("<strong>Túnel 2 (L: 1,935 m)</strong><br/>km 19+202 al km 21+138 (San Juan de Lurigancho &ndash; Lurigancho)");
 
-    // Etiquetas de portal de ingreso y salida
     const portales = [
       { coords: t1Coords[0], txt: "🚇 Inicio Túnel 1" },
       { coords: t1Coords[1], txt: "🚇 Fin Túnel 1 (2,285m)" },
