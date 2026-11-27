@@ -69,7 +69,9 @@
           <span class="pulse-green"></span>
           <span>Visitas: <strong id="visit-counter">...</strong></span>
         </div>
-        <button id="btn-methodology" class="btn-outline" title="Ver enfoque de Maestría y Fuentes">Metodología &amp; Fuentes</button>
+        <button id="btn-sustento" class="btn-sustento" title="Abrir Informe de Sustento Técnico en pantalla completa">
+          Sustento Técnico
+        </button>
         <div class="user-chip">
           <img id="user-photo" src="" alt="Usuario" />
           <span id="user-name">Invitado</span>
@@ -262,45 +264,264 @@
           </div>
         </div>
 
-        <!-- PIE DE AUTORÍA -->
+        <!-- PIE DE AUTORÍA (SOLO LINKEDIN) -->
         <footer class="panel-footer">
-          <strong>Ing. Vladimir J. Casas P.</strong> &bull; Gestión de Proyectos, Predios &amp; ConTech WebGIS<br />
-          <a href="https://www.linkedin.com/in/vjcasasp/" target="_blank" rel="noopener">LinkedIn</a> &bull;
-          <a href="https://github.com/VlaCasPa" target="_blank" rel="noopener">GitHub (VlaCasPa)</a>
+          <strong>Ing. Vladimir J. Casas P.</strong> &bull; Gestión de Proyectos, Predios &amp; ConTech WebGIS &bull;
+          <a href="https://www.linkedin.com/in/vjcasasp/" target="_blank" rel="noopener">Perfil en LinkedIn</a>
         </footer>
       </aside>
     </main>
   </div>
 
-  <!-- MODAL DE METODOLOGÍA DE MAESTRÍA Y SUSTENTO -->
-  <div id="method-modal" class="modal-backdrop hidden">
-    <div class="modal-card wide">
-      <div class="modal-header-row">
-        <h2>Sustento Metodológico y Enfoque de Gestión de Proyectos</h2>
-        <button id="close-method" class="btn-close">&times;</button>
-      </div>
-      <p class="modal-subtitle">Aplicación práctica de herramientas de la Maestría en Gestión de la Construcción (UTP) al seguimiento ejecutivo de megaproyectos:</p>
-      <div class="method-grid">
-        <div class="method-item">
-          <h4>1. Guía PMBOK (PMI)</h4>
-          <p>Estructura del visor alineada a las áreas de conocimiento de <strong>Alcance</strong> (34.8 km y 46 estructuras singulares), <strong>Cronograma</strong> (ruta crítica por tramos y hitos MTP Go/No-Go), <strong>Costos</strong> (curva CAPEX 2025&ndash;2029) e <strong>Interesados</strong> (planes de participación ciudadana y relacionamiento temprano).</p>
+  <!-- MÓDULO DE LECTURA: INFORME DE SUSTENTO TÉCNICO (VENTANA EMERGENTE EDITABLE EN HTML) -->
+  <div id="sustento-modal" class="reader-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="sustento-title">
+    <div class="reader-container">
+      <!-- BARRA SUPERIOR DEL MÓDULO DE LECTURA -->
+      <div class="reader-topbar">
+        <div class="reader-topbar-info">
+          <span class="reader-pill">DOCUMENTO TÉCNICO DE SUSTENTO &bull; CORTE: 27/11/2026</span>
+          <strong id="sustento-title">Geoportal Ejecutivo: Proyecto Anillo Vial Periférico de Lima y Callao (AVP)</strong>
         </div>
-        <div class="method-item">
-          <h4>2. Design Thinking</h4>
-          <p>Diseño centrado en el usuario decisor (gerentes de obra, PMO, inversionistas y autoridades): transformación de expedientes legales extensos y tablas de 2,798 coordenadas en una interfaz visual intuitiva en menos de 3 clics.</p>
-        </div>
-        <div class="method-item">
-          <h4>3. Data Mining &amp; Geoprocesamiento</h4>
-          <p>Extracción, limpieza y estandarización espacial (WGS84 / EPSG:4326) de resoluciones ministeriales, planos de planta, tablas de progresivas y límites distritales mediante RustGIS y estructuración GeoJSON ligera.</p>
-        </div>
-        <div class="method-item">
-          <h4>4. Analítica Predictiva Conceptual</h4>
-          <p>Categorización de escenarios de liberación de áreas e interferencias según densidad urbana y complejidad institucional (TUO D. Leg. N.° 1192 y estándares socioambientales BID/BM).</p>
+        <div class="reader-topbar-actions">
+          <button id="btn-print-sustento" class="btn-reader-secondary" title="Imprimir o guardar copia">Imprimir</button>
+          <button id="btn-close-sustento" class="btn-reader-close">&larr; Volver al Mapa</button>
         </div>
       </div>
-      <div class="disclaimer-box">
-        <strong>Fuentes Oficiales Consultadas (Corte: 27/11/2026):</strong> Ministerio de Transportes y Comunicaciones (R.M. N.° 869-2025-MTC/01.02), OSITRAN, PROINVERSIÓN, Plan de Negocios de la Sociedad Concesionaria Anillo Vial S.A.C. (Febrero 2025) y cartografía referencial GeoGPS Perú.
-      </div>
+
+      <!-- CUERPO JERARQUIZADO DEL DOCUMENTO -->
+      <article class="reader-body">
+        <header class="doc-cover">
+          <div class="doc-kicker">INFORME TÉCNICO DE ARQUITECTURA, DATOS OFICIALES Y GESTIÓN DE PROYECTOS</div>
+          <h1>Sustento Técnico y Metodológico: Visor WebGIS del Anillo Vial Periférico (AVP)</h1>
+          <p class="doc-lead">
+            Sistematización cartográfica, contractual, financiera y socio-predial de la autopista urbana de 34.8 km que articulará 11 distritos de Lima Metropolitana y la Provincia Constitucional del Callao, elaborada bajo estándares modernos de Dirección de Proyectos (PMBOK, Design Thinking y Analítica Geoespacial).
+          </p>
+          <div class="doc-meta-strip">
+            <div><span>Autor:</span> <strong>Ing. Vladimir J. Casas P.</strong></div>
+            <div><span>Especialidad:</span> <strong>Maestría en Gestión de la Construcción (UTP)</strong></div>
+            <div><span>Fecha de Corte:</span> <strong>27 de noviembre de 2026</strong></div>
+            <div><span>Contacto:</span> <a href="https://www.linkedin.com/in/vjcasasp/" target="_blank" rel="noopener">LinkedIn Oficial</a></div>
+          </div>
+        </header>
+
+        <!-- SECCIÓN 1 -->
+        <section class="doc-section">
+          <h2>1. Propósito Estratégico y Alcance del Geoportal</h2>
+          <p>
+            Los proyectos de infraestructura vial urbana de gran escala concentran información técnica dispersa entre resoluciones ministeriales, cuadros de coordenadas UTM, planos de planta, modelos financieros y planes de gestión socioambiental. En consecuencia, el presente geoportal ha sido concebido como una <strong>plataforma interactiva de inteligencia territorial</strong> destinada a sintetizar dichos insumos en un entorno visual único, facilitando la lectura ejecutiva del avance y los beneficios estructurales del <strong>Anillo Vial Periférico (AVP)</strong>.
+          </p>
+          <p>
+            Asimismo, la herramienta adopta un enfoque estrictamente <strong>informativo, técnico y propositivo</strong>, orientado a evidenciar cómo esta megaobra cierra brechas críticas de conectividad, impulsa la competitividad logística del país y moderniza la movilidad metropolitana mediante ingeniería subterránea, viaductos, pasos a desnivel y Sistemas Inteligentes de Transporte (ITS).
+          </p>
+
+          <div class="doc-kpi-banner">
+            <div class="dk-item"><strong>34.8 km</strong><span>Longitud total de autopista urbana (3 carriles/sentido)</span></div>
+            <div class="dk-item"><strong>US$ 3,400 M</strong><span>Inversión total estimada bajo modalidad APP</span></div>
+            <div class="dk-item"><strong>4.5 Millones</strong><span>Habitantes beneficiados en 12 jurisdicciones</span></div>
+            <div class="dk-item"><strong>2,798</strong><span>Vértices oficiales del Derecho de Vía (WGS84)</span></div>
+          </div>
+        </section>
+
+        <!-- SECCIÓN 2 -->
+        <section class="doc-section">
+          <h2>2. Estructura Técnica, Financiera y Contractual por Tramos</h2>
+          <p>
+            De acuerdo con el Contrato de Concesión suscrito entre el Estado Peruano y la <strong>Sociedad Concesionaria Anillo Vial S.A.C.</strong> (conformada por los operadores internacionales <strong>Cintra, Sacyr y ACCIONA</strong>), el corredor se organiza en tres grandes tramos funcionales. Cada uno responde a una dinámica urbana, geotécnica y predial diferenciada, tal como se consolida en la siguiente matriz comparativa:
+          </p>
+
+          <div class="table-wrapper">
+            <table class="doc-table">
+              <thead>
+                <tr>
+                  <th>Dimensión Técnica / Contractual</th>
+                  <th>Tramo I (Oeste &ndash; Norte)</th>
+                  <th>Tramo II (Norte &ndash; Este)</th>
+                  <th>Tramo III (Este &ndash; Sur)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Longitud y Límites</strong></td>
+                  <td><strong>8.7 km</strong><br>Óvalo 200 Millas &ndash; Panamericana Norte</td>
+                  <td><strong>15.1 km</strong><br>Panamericana Norte &ndash; Av. Ramiro Prialé</td>
+                  <td><strong>11.0 km</strong><br>Av. Ramiro Prialé &ndash; Av. Circunvalación</td>
+                </tr>
+                <tr>
+                  <td><strong>Jurisdicción Distrital (12)</strong></td>
+                  <td>Callao, San Martín de Porres, Los Olivos, Independencia (4)</td>
+                  <td>Independencia, Comas, San Juan de Lurigancho, Lurigancho-Chosica (4)</td>
+                  <td>Lurigancho, El Agustino, Santa Anita, Ate, La Molina, San Luis (6)</td>
+                </tr>
+                <tr>
+                  <td><strong>Obras Singulares (46)</strong></td>
+                  <td>&bull; 5 Intercambios Viales (IVD)<br>&bull; 5 Pasos a Desnivel (Bypass)<br>&bull; 1 Peaje Troncal (km 3+650&ndash;4+350)</td>
+                  <td>&bull; 1 IVD (Próceres de la Independencia)<br>&bull; 11 Pasos a Desnivel (Bypass)<br>&bull; <strong>2 Túneles (4.22 km):</strong> Túnel 1 (2,285 m) y Túnel 2 (1,935 m)<br>&bull; Viaducto Av. El Sol (1,412 m)<br>&bull; 1 Peaje Troncal + 1 Lateral</td>
+                  <td>&bull; 6 Intercambios Viales (IVD)<br>&bull; 8 Pasos a Desnivel (Bypass)<br>&bull; Cruce Río Rímac (km 23+950&ndash;24+150)<br>&bull; Cruce FFCC Central (km 25+200)<br>&bull; 1 Peaje Troncal + 1 Lateral</td>
+                </tr>
+                <tr>
+                  <td><strong>Hitos Prediales y Ambientales</strong></td>
+                  <td>&bull; Meta 100% predios: <strong>Mes 24</strong><br>&bull; Interferencias: <strong>24/38 meses</strong> (convenios telecom vigentes a 13 meses)<br>&bull; Compensaciones PROINVERSIÓN en curso</td>
+                  <td>&bull; Concentra el <strong>96% de expropiaciones</strong> (~2,454 de ~4,100 predios)<br>&bull; Meta predios: <strong>Mes 46/66</strong><br>&bull; Remediación ambiental ex vertedero <strong>La Vizcachera</strong> (Mes 78)</td>
+                  <td>&bull; Meta 100% predios: <strong>Mes 28</strong><br>&bull; Interferencias: <strong>28/43 meses</strong><br>&bull; Creación del <strong>Parque Lineal</strong> en Av. Separadora Industrial</td>
+                </tr>
+                <tr>
+                  <td><strong>Plazo de Ejecución de Obra</strong></td>
+                  <td><strong>38 meses</strong> (Plazo integral: 5.2 años)</td>
+                  <td><strong>60 meses</strong> túneles / <strong>48 meses</strong> resto obra (Integral: 9.5 años)</td>
+                  <td><strong>42 meses</strong> (Plazo integral: 5.8 años)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- GRÁFICOS VISUALES COMPARATIVOS (SVG + BARRAS) -->
+          <div class="charts-grid">
+            <div class="chart-card">
+              <h4>Gráfico 1: Curva de Inversión CAPEX + Gasto Financiero (2025&ndash;2029)</h4>
+              <p class="chart-sub">Desembolsos proyectados según Plan de Negocios (Total periodo: US$ 2,048.79 Millones)</p>
+              <svg viewBox="0 0 420 190" class="svg-chart" aria-label="Gráfico de barras CAPEX 2025 a 2029">
+                <!-- Líneas guía -->
+                <line x1="45" y1="25" x2="400" y2="25" stroke="#e2e8f0" stroke-dasharray="3,3" />
+                <line x1="45" y1="65" x2="400" y2="65" stroke="#e2e8f0" stroke-dasharray="3,3" />
+                <line x1="45" y1="105" x2="400" y2="105" stroke="#e2e8f0" stroke-dasharray="3,3" />
+                <line x1="45" y1="145" x2="400" y2="145" stroke="#94a3b8" stroke-width="1.2" />
+                <!-- Etiquetas Y -->
+                <text x="40" y="29" font-size="9" fill="#64748b" text-anchor="end">$700M</text>
+                <text x="40" y="69" font-size="9" fill="#64748b" text-anchor="end">$450M</text>
+                <text x="40" y="109" font-size="9" fill="#64748b" text-anchor="end">$200M</text>
+                <text x="40" y="148" font-size="9" fill="#64748b" text-anchor="end">$0</text>
+                <!-- Barras -->
+                <rect x="65" y="117" width="42" height="28" rx="4" fill="#0284c7" />
+                <text x="86" y="112" font-size="9.5" font-weight="700" fill="#0f172a" text-anchor="middle">$162.5M</text>
+                <text x="86" y="162" font-size="10" font-weight="600" fill="#334155" text-anchor="middle">2025</text>
+
+                <rect x="135" y="121" width="42" height="24" rx="4" fill="#0284c7" />
+                <text x="156" y="116" font-size="9.5" font-weight="700" fill="#0f172a" text-anchor="middle">$140.8M</text>
+                <text x="156" y="162" font-size="10" font-weight="600" fill="#334155" text-anchor="middle">2026</text>
+
+                <rect x="205" y="73" width="42" height="72" rx="4" fill="#0369a1" />
+                <text x="226" y="68" font-size="9.5" font-weight="700" fill="#0f172a" text-anchor="middle">$421.3M</text>
+                <text x="226" y="162" font-size="10" font-weight="600" fill="#334155" text-anchor="middle">2027</text>
+
+                <rect x="275" y="33" width="42" height="112" rx="4" fill="#059669" />
+                <text x="296" y="28" font-size="9.5" font-weight="700" fill="#0f172a" text-anchor="middle">$652.4M</text>
+                <text x="296" y="162" font-size="10" font-weight="600" fill="#334155" text-anchor="middle">2028</text>
+
+                <rect x="345" y="30" width="42" height="115" rx="4" fill="#047857" />
+                <text x="366" y="25" font-size="9.5" font-weight="700" fill="#0f172a" text-anchor="middle">$671.9M</text>
+                <text x="366" y="162" font-size="10" font-weight="600" fill="#334155" text-anchor="middle">2029</text>
+              </svg>
+            </div>
+
+            <div class="chart-card">
+              <h4>Gráfico 2: Distribución de Longitud y Estructuras por Tramo</h4>
+              <p class="chart-sub">Participación porcentual sobre los 34.8 km totales e inventario de obras mayores</p>
+              <div class="stacked-visual">
+                <div class="sv-label">Distribución Kilométrica (34.8 km totales):</div>
+                <div class="sv-bar">
+                  <div style="width:25%; background:#0284c7;" title="Tramo I: 8.7 km (25%)">T1: 8.7 km (25%)</div>
+                  <div style="width:43.4%; background:#d97706;" title="Tramo II: 15.1 km (43.4%)">T2: 15.1 km (43.4%)</div>
+                  <div style="width:31.6%; background:#059669;" title="Tramo III: 11.0 km (31.6%)">T3: 11.0 km (31.6%)</div>
+                </div>
+                <div class="sv-stats">
+                  <div><strong>37 Bancos</strong><span>Estructuración financiera (65% Internacional, 24% Desarrollo, 11% Local)</span></div>
+                  <div><strong>US$ 30 M</strong><span>Carta Fianza de Fiel Cumplimiento vigente (BCP)</span></div>
+                  <div><strong>2.5% PBI</strong><span>Impacto económico estimado en Lima Metropolitana</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECCIÓN 3 -->
+        <section class="doc-section">
+          <h2>3. Beneficios Estructurales, Tecnología y Sinergia Multimodal</h2>
+          <p>
+            Más allá de constituir una vía rápida de circunvalación, el proyecto ha sido diseñado bajo un concepto de <strong>corredor multimodal e inteligente</strong> que transforma la productividad urbana de Lima y Callao:
+          </p>
+          <ul class="doc-list">
+            <li><strong>Conectividad Logística y Comercio Exterior:</strong> Establece un enlace directo y sin interrupciones semafóricas entre el <strong>Puerto del Callao</strong>, el <strong>Nuevo Aeropuerto Internacional Jorge Chávez</strong> y los polos industriales de Lima Norte y Lima Este (Santa Anita, Ate, Huachipa), reduciendo tiempos de transporte de carga y emisiones de CO<sub>2</sub>.</li>
+            <li><strong>Integración con el Transporte Masivo:</strong> Articula transversalmente la <strong>Línea 1 del Metro de Lima</strong> (San Juan de Lurigancho), la <strong>Línea 2 del Metro de Lima</strong> (Ate / Santa Anita / Carretera Central), el sistema <strong>Metropolitano</strong> (Independencia / Naranjal) y seis rutas nacionales (<strong>PE-1N, PE-1S, PE-20, PE-20B, PE-20J y PE-22</strong>).</li>
+            <li><strong>Equidad Territorial y Vías Laterales Gratuitas:</strong> Incorpora calzadas laterales libres de peaje en todo el trazo para el tránsito local, pasos peatonales cada 500 metros, paraderos integrados y el nuevo <strong>Parque Lineal de Separadora Industrial</strong>.</li>
+            <li><strong>Smart Highway y Seguridad Vial (ITS):</strong> Opera con un Centro de Control de Operaciones (OCC), paneles de mensajería variable, detección automática de incidentes, postes SOS, control de exceso de carga y equipamiento electromecánico de última generación en los 4.22 km de túneles dobles.</li>
+            <li><strong>Dinamización del Empleo:</strong> Impulsa la creación de miles de empleos directos e indirectos a lo largo de las fases de estudios definitivos (EDI/EIA-d), saneamiento físico-legal, construcción de obras civiles y operación vial.</li>
+          </ul>
+        </section>
+
+        <!-- SECCIÓN 4 -->
+        <section class="doc-section">
+          <h2>4. Marco Metodológico Aplicado (Enfoque de Maestría en Gestión de Proyectos)</h2>
+          <p>
+            La arquitectura conceptual y funcional de este geoportal traduce en la práctica las metodologías contemporáneas de dirección de proyectos de construcción e infraestructura:
+          </p>
+
+          <div class="table-wrapper">
+            <table class="doc-table">
+              <thead>
+                <tr>
+                  <th>Enfoque / Tendencia</th>
+                  <th>Aplicación Concreta en el Geoportal AVP</th>
+                  <th>Valor para la Toma de Decisiones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Guía PMBOK (PMI)</strong></td>
+                  <td>Desglose jerárquico (WBS) del alcance por tramo y estructura, integración de cronograma maestro (hitos MTP Go/No-Go), curva de costos (CAPEX) y matriz de interesados (12 distritos).</td>
+                  <td>Permite evaluar en un solo tablero la interdependencia entre liberación predial, interferencias y plazos de ejecución de obra.</td>
+                </tr>
+                <tr>
+                  <td><strong>Design Thinking</strong></td>
+                  <td>Diseño centrado en la experiencia del usuario ejecutivo mediante una interfaz de doble panel (Visor Cartográfico + Dashboard Analítico) con acceso en menos de 3 clics.</td>
+                  <td>Elimina la fricción de revisar expedientes extensos o planos aislados, facilitando reuniones gerenciales y presentaciones institucionales.</td>
+                </tr>
+                <tr>
+                  <td><strong>Data Mining &amp; WebGIS</strong></td>
+                  <td>Extracción, depuración topológica en <strong>RustGIS</strong>, estandarización al sistema geográfico <strong>WGS84 (EPSG:4326)</strong> y optimización de 11 capas GeoJSON ligeras.</td>
+                  <td>Garantiza precisión espacial respaldada en los 2,798 vértices oficiales del MTC y fluidez de carga tanto en PC como en dispositivos móviles.</td>
+                </tr>
+                <tr>
+                  <td><strong>Analítica Predictiva Conceptual</strong></td>
+                  <td>Modelamiento referencial de escenarios de gestión predial e interferencias según tipología (Trato Directo, Expropiación, Telecomunicaciones y Saneamiento/Energía).</td>
+                  <td>Anticipa rutas críticas administrativas y legales en el marco del TUO del D. Leg. N.° 1192 y los estándares socioambientales BID/Banco Mundial.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- SECCIÓN 5: SOLO FUENTES OFICIALES -->
+        <section class="doc-section sources-section">
+          <h2>5. Fuentes Oficiales y Trazabilidad Normativa (Corte: 27/11/2026)</h2>
+          <p>
+            Toda la información cartográfica, legal, financiera y técnica contenida en este geoportal proviene exclusivamente de documentos y portales oficiales del Estado Peruano y de las entidades vinculadas al contrato de concesión:
+          </p>
+          <ol class="official-sources-list">
+            <li>
+              <strong>Ministerio de Transportes y Comunicaciones (MTC):</strong> Resolución Ministerial N.° 869-2025-MTC/01.02 (publicada en el Diario Oficial <em>El Peruano</em> el 30 de noviembre de 2025), que modifica los Anexos 1 y 2 de la R.M. N.° 918-2017-MTC/01.02 aprobando la Ampliación del Derecho de Vía del Proyecto "Anillo Vial Periférico" (2,798 vértices UTM WGS84 Zona 18S y láminas de planta DV-01 a DV-35).<br>
+              <a href="https://www.gob.pe/institucion/mtc/normas-legales/7455007-869-2025-mtc-01-02" target="_blank" rel="noopener">https://www.gob.pe/institucion/mtc/normas-legales/7455007-869-2025-mtc-01-02</a>
+            </li>
+            <li>
+              <strong>Organismo Supervisor de la Inversión en Infraestructura de Transporte de Uso Público (OSITRAN) &amp; Sociedad Concesionaria Anillo Vial S.A.C.:</strong> Plan de Negocios Anillo Vial Periférico (Febrero 2025) e Informe N.° 00052-2025-UFAVP-GSF-OSITRAN.<br>
+              <a href="https://www.ositran.gob.pe/anterior/wp-content/uploads/2025/07/plan-negocios-anillo-vial-periferico-2025-1.pdf" target="_blank" rel="noopener">https://www.ositran.gob.pe/anterior/wp-content/uploads/2025/07/plan-negocios-anillo-vial-periferico-2025-1.pdf</a>
+            </li>
+            <li>
+              <strong>Agencia de Promoción de la Inversión Privada (PROINVERSIÓN):</strong> Reportes oficiales de consolidación de titularidad, avances en liberación predial y suscripción de convenios de remoción de interferencias del Proyecto Anillo Vial Periférico.<br>
+              <a href="https://www.investinperu.pe/proinversion-consolida-titularidad-del-proyecto-anillo-vial-periferico/" target="_blank" rel="noopener">https://www.investinperu.pe/proinversion-consolida-titularidad-del-proyecto-anillo-vial-periferico/</a>
+            </li>
+            <li>
+              <strong>Plataforma Digital Única del Estado Peruano (Gob.pe &ndash; MTC):</strong> Marco normativo y procedimiento oficial de adquisición de predios y liberación de interferencias bajo el TUO del Decreto Legislativo N.° 1192.<br>
+              <a href="https://www.gob.pe/80868-proceso-de-adquisicion-de-predios" target="_blank" rel="noopener">https://www.gob.pe/80868-proceso-de-adquisicion-de-predios</a>
+            </li>
+          </ol>
+
+          <div class="doc-signoff">
+            <strong>Ing. Vladimir J. Casas P.</strong> &mdash; Ingeniero Civil | Maestría en Gestión de la Construcción (UTP)<br>
+            <span>ConTech, Gestión de Proyectos de Infraestructura &amp; Analítica Geoespacial &bull; </span>
+            <a href="https://www.linkedin.com/in/vjcasasp/" target="_blank" rel="noopener">linkedin.com/in/vjcasasp</a>
+          </div>
+        </section>
+      </article>
     </div>
   </div>
 
