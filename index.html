@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Geoportal Ejecutivo | Anillo Vial Periférico de Lima y Callao</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- MODAL DE ACCESO Y SUSTENTO OFICIAL -->
+  <div id="auth-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-badge">INTELIGENCIA TERRITORIAL &amp; GESTIÓN DE INFRAESTRUCTURA</div>
+      <h1>Geoportal Ejecutivo: Anillo Vial Periférico (AVP)</h1>
+      <p class="modal-subtitle">
+        Plataforma WebGIS de análisis estratégico sobre avance contractual, inversión, derecho de vía, estructuras singulares y beneficios distritales (Corte oficial: 27/11/2026).
+      </p>
+
+      <div class="disclaimer-box">
+        <strong>Trazabilidad Oficial y Carácter Informativo:</strong>
+        <ul>
+          <li>Cartografía y vértices del Derecho de Vía basados en la <strong>R.M. N.° 869-2025-MTC/01.02</strong> y cartografía abierta referencial.</li>
+          <li>Datos financieros, cronogramas e infraestructura extraídos del Plan de Negocios de la <strong>Sociedad Concesionaria Anillo Vial S.A.C.</strong> (Cintra, Sacyr, ACCIONA), <strong>OSITRAN</strong> y <strong>PROINVERSIÓN</strong>.</li>
+          <li>Herramienta desarrollada con fines de divulgación técnica y gestión de proyectos (PMBOK, Design Thinking &amp; Data Mining).</li>
+        </ul>
+      </div>
+
+      <div class="profile-select-group">
+        <label for="visitor-role">Seleccione su área de interés (opcional):</label>
+        <select id="visitor-role">
+          <option value="Ingeniería Civil / Construcción">Ingeniería Civil / Construcción</option>
+          <option value="Gestión de Proyectos / PMO">Gestión de Proyectos / PMO</option>
+          <option value="Gestión Predial / Legal / Permisos">Gestión Predial / Legal / Permisos</option>
+          <option value="Inversión / Banca / Finanzas">Inversión / Banca / Finanzas</option>
+          <option value="Sector Público / Academia / Otro">Sector Público / Academia / Otro</option>
+        </select>
+      </div>
+
+      <button id="btn-google-login" class="btn-google">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
+        <span>Ingresar al Visor Ejecutivo con Google</span>
+      </button>
+      <p id="auth-error" class="auth-error hidden"></p>
+
+      <div class="modal-footer">
+        Desarrollado por <strong>Ing. Vladimir J. Casas P.</strong> &bull; Maestría en Gestión de la Construcción (UTP)
+      </div>
+    </div>
+  </div>
+
+  <!-- INTERFAZ PRINCIPAL -->
+  <div id="app-shell" class="app-shell hidden">
+    <!-- BARRA SUPERIOR -->
+    <header class="topbar">
+      <div class="topbar-brand">
+        <div class="brand-dot"></div>
+        <div>
+          <span class="brand-title">ANILLO VIAL PERIFÉRICO &mdash; VISOR WEBGIS EJECUTIVO</span>
+          <span class="brand-sub">34.8 km &bull; 12 Distritos (Lima y Callao) &bull; Inversión US$ 3,400M &bull; Corte: 27/11/2026</span>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="visit-pill" title="Visitas registradas en tiempo real">
+          <span class="pulse-green"></span>
+          <span>Visitas: <strong id="visit-counter">...</strong></span>
+        </div>
+        <button id="btn-methodology" class="btn-outline" title="Ver enfoque de Maestría y Fuentes">Metodología &amp; Fuentes</button>
+        <div class="user-chip">
+          <img id="user-photo" src="" alt="Usuario" />
+          <span id="user-name">Invitado</span>
+          <button id="btn-logout" title="Cerrar sesión">&times;</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENIDO DIVIDIDO: MAPA + PANEL GERENCIAL -->
+    <main class="workspace">
+      <!-- PANEL IZQUIERDO: MAPA Y CONTROL DE CAPAS -->
+      <section class="map-pane">
+        <div id="map"></div>
+
+        <!-- SELECTOR RÁPIDO DE TRAMOS SOBRE EL MAPA -->
+        <div class="tramo-bar">
+          <button class="tramo-btn active" data-tramo="ALL">Todos (34.8 km)</button>
+          <button class="tramo-btn" data-tramo="I">Tramo I (8.7 km)</button>
+          <button class="tramo-btn" data-tramo="II">Tramo II (15.1 km)</button>
+          <button class="tramo-btn" data-tramo="III">Tramo III (11.0 km)</button>
+        </div>
+
+        <!-- CONTROL FLOTANTE DE CAPAS DINÁMICAS -->
+        <aside class="layers-card">
+          <div class="layers-header">
+            <span>Capas del Proyecto</span>
+            <button id="toggle-layers" title="Minimizar/Expandir">&minus;</button>
+          </div>
+          <div id="layers-body" class="layers-body">
+            <label class="layer-item"><input type="checkbox" data-layer="tramo1" checked /><span class="swatch" style="background:#0284c7"></span> Eje Tramo I (Oeste-Norte)</label>
+            <label class="layer-item"><input type="checkbox" data-layer="tramo2" checked /><span class="swatch" style="background:#d97706"></span> Eje Tramo II (Norte-Este)</label>
+            <label class="layer-item"><input type="checkbox" data-layer="tramo3" checked /><span class="swatch" style="background:#059669"></span> Eje Tramo III (Este-Sur)</label>
+            <label class="layer-item"><input type="checkbox" data-layer="derechoVia" checked /><span class="swatch" style="background:#7c3aed; opacity:.55"></span> Derecho de Vía (R.M. 869-2025)</label>
+            <hr />
+            <label class="layer-item"><input type="checkbox" data-layer="ivd" checked /><span class="dot" style="background:#eab308"></span> Intercambios Viales (12)</label>
+            <label class="layer-item"><input type="checkbox" data-layer="bypass" checked /><span class="dot" style="background:#ef4444"></span> Pasos a Desnivel / Bypass (24)</label>
+            <label class="layer-item"><input type="checkbox" data-layer="tuneles" checked /><span class="dot" style="background:#1e293b"></span> Túneles Tramo II (4.22 km)</label>
+            <label class="layer-item"><input type="checkbox" data-layer="viaducto" checked /><span class="dot" style="background:#ec4899"></span> Viaducto Av. El Sol (1.41 km)</label>
+            <label class="layer-item"><input type="checkbox" data-layer="peajes" checked /><span class="dot" style="background:#0ea5e9"></span> Estaciones de Peaje (5)</label>
+            <label class="layer-item"><input type="checkbox" data-layer="cruces" checked /><span class="dot" style="background:#14b8a6"></span> Cruces Especiales (Río/FFCC)</label>
+            <hr />
+            <label class="layer-item"><input type="checkbox" data-layer="distritos" checked /><span class="swatch" style="background:#94a3b8; opacity:.4"></span> Distritos (Clic para beneficios)</label>
+          </div>
+        </aside>
+      </section>
+
+      <!-- PANEL DERECHO: DASHBOARD GERENCIAL Y FICHA DISTRITAL -->
+      <aside class="dashboard-pane">
+        <!-- PESTAÑAS DE NAVEGACIÓN -->
+        <nav class="tabs-nav">
+          <button class="tab-btn active" data-tab="resumen">Resumen &amp; Finanzas</button>
+          <button class="tab-btn" data-tab="tramos">Tramos &amp; Predios</button>
+          <button class="tab-btn" data-tab="distrito">Beneficios Distrito</button>
+          <button class="tab-btn" data-tab="simulador">Gestión &amp; Plazos</button>
+        </nav>
+
+        <!-- TAB 1: RESUMEN EJECUTIVO Y FINANCIERO -->
+        <div id="tab-resumen" class="tab-content active">
+          <div class="kpi-grid">
+            <div class="kpi-card highlight">
+              <span class="kpi-label">Inversión Total Estimada</span>
+              <span class="kpi-value">US$ 3,400 M</span>
+              <span class="kpi-note">APP &bull; Cintra, Sacyr y ACCIONA</span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-label">Impacto Macroeconómico</span>
+              <span class="kpi-value">2.5% PBI Lima</span>
+              <span class="kpi-note">-13% brecha transporte Perú</span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-label">Población Beneficiada</span>
+              <span class="kpi-value">4.5 Millones</span>
+              <span class="kpi-note">11 distritos Lima + Callao</span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-label">Vértices Derecho de Vía</span>
+              <span class="kpi-value">2,798 Pts</span>
+              <span class="kpi-note">R.M. N.° 869-2025-MTC/01.02</span>
+            </div>
+          </div>
+
+          <div class="card-section">
+            <h3>Proyección de CAPEX y Gasto Financiero (2025&ndash;2029)</h3>
+            <p class="small-muted">Desembolsos proyectados según Plan de Negocios (US$ 2,048.79 M acumulados al 2029):</p>
+            <div class="capex-bars">
+              <div class="bar-row"><span>2025</span><div class="bar-track"><div class="bar-fill" style="width:24%"></div></div><strong>US$ 162.5M</strong></div>
+              <div class="bar-row"><span>2026</span><div class="bar-track"><div class="bar-fill" style="width:21%"></div></div><strong>US$ 140.8M</strong></div>
+              <div class="bar-row"><span>2027</span><div class="bar-track"><div class="bar-fill" style="width:63%"></div></div><strong>US$ 421.3M</strong></div>
+              <div class="bar-row"><span>2028</span><div class="bar-track"><div class="bar-fill" style="width:97%"></div></div><strong>US$ 652.4M</strong></div>
+              <div class="bar-row"><span>2029</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><strong>US$ 671.9M</strong></div>
+            </div>
+            <div class="finance-badges">
+              <span>Carta Fianza BCP: <strong>US$ 30M</strong></span>
+              <span>37 Entidades Financieras (65% Int. / 24% Des. / 11% Loc.)</span>
+            </div>
+          </div>
+
+          <div class="card-section">
+            <h3>Ingeniería, Tecnología ITS y Conectividad Multimodal</h3>
+            <ul class="feature-list">
+              <li><strong>Autopista Urbana Inteligente (ITS):</strong> 3 carriles por sentido (80&ndash;120 km/h), Centro de Control de Operaciones (OCC), detección automática de incidentes, pesaje dinámico y paneles de mensajería variable.</li>
+              <li><strong>Movilidad Local Gratuita:</strong> Vías laterales libres de peaje en todo el recorrido y puentes peatonales cada 500 m.</li>
+              <li><strong>Articulación Multimodal:</strong> Acceso directo al Puerto del Callao, Aeropuerto Jorge Chávez, Línea 1 (SJL), Línea 2 (Ate/Santa Anita), Metropolitano y 6 rutas nacionales (PE-1N, PE-1S, PE-20, PE-22).</li>
+              <li><strong>Empleo y Desarrollo:</strong> Miles de puestos de trabajo directos e indirectos en ingeniería, liberación predial, construcción y operación.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- TAB 2: ANÁLISIS POR TRAMO Y EXPROPIACIONES -->
+        <div id="tab-tramos" class="tab-content">
+          <div class="tramo-detail-card border-t1">
+            <div class="td-header">
+              <h4>TRAMO I: Eje Logístico y Aeroportuario</h4>
+              <span class="badge-t1">8.7 km &bull; 5.2 años</span>
+            </div>
+            <p><strong>Jurisdicción:</strong> Callao, San Martín de Porres, Los Olivos, Independencia.</p>
+            <p><strong>Estructuras:</strong> 5 Intercambios Viales (Gambetta, Faucett, Canta Callao, Universitaria, Panamericana Norte), 5 Pasos a Desnivel y 1 Peaje Troncal.</p>
+            <p><strong>Gestión Predial &amp; Avances:</strong> Liberación 100% predios en Mes 24; remoción interferencias en 24/38 meses (convenios telecom vigentes a 13 meses; entregas de cheques PROINVERSIÓN en curso).</p>
+          </div>
+
+          <div class="tramo-detail-card border-t2">
+            <div class="td-header">
+              <h4>TRAMO II: Integración Norte&ndash;Este y Túneles</h4>
+              <span class="badge-t2">15.1 km &bull; 9.5 años</span>
+            </div>
+            <p><strong>Jurisdicción:</strong> Independencia, Comas, San Juan de Lurigancho, Lurigancho-Chosica.</p>
+            <p><strong>Estructuras:</strong> 1 IVD (Próceres), 11 Pasos a Desnivel, <strong>Túnel 1 (2,285 m)</strong>, <strong>Túnel 2 (1,935 m)</strong>, <strong>Viaducto Av. El Sol (1,412 m)</strong> y 2 Peajes.</p>
+            <p><strong>Gestión Predial &amp; Ambiental:</strong> Concentra el <strong>96% de las expropiaciones</strong> (~2,454 predios de ~4,100 totales). Hito de liberación predial (Mes 46/66) y remediación ambiental del ex vertedero La Vizcachera (Mes 78).</p>
+          </div>
+
+          <div class="tramo-detail-card border-t3">
+            <div class="td-header">
+              <h4>TRAMO III: Corredor Industrial y Empresarial</h4>
+              <span class="badge-t3">11.0 km &bull; 5.8 años</span>
+            </div>
+            <p><strong>Jurisdicción:</strong> Lurigancho, El Agustino, Santa Anita, Ate, La Molina, San Luis.</p>
+            <p><strong>Estructuras:</strong> 6 IVD (Ramiro Prialé, Carretera Central, Huarochirí, La Molina, Evitamiento, Circunvalación), 8 Pasos a Desnivel, Cruce Río Rímac, Cruce FFCC Central y 2 Peajes.</p>
+            <p><strong>Gestión Predial &amp; Urbana:</strong> Liberación 100% predios en Mes 28; incluye tratamiento paisajístico y creación del Parque Lineal en Separadora Industrial.</p>
+          </div>
+        </div>
+
+        <!-- TAB 3: BENEFICIOS POR DISTRITO (INTERACTIVO AL HACER CLIC EN MAPA) -->
+        <div id="tab-distrito" class="tab-content">
+          <div class="district-selector-box">
+            <label for="district-select">Seleccione o haga clic en un distrito del mapa:</label>
+            <select id="district-select">
+              <option value="CALLAO">Callao (Provincia Constitucional)</option>
+              <option value="SAN MARTIN DE PORRES">San Martín de Porres</option>
+              <option value="LOS OLIVOS">Los Olivos</option>
+              <option value="INDEPENDENCIA">Independencia</option>
+              <option value="COMAS">Comas</option>
+              <option value="SAN JUAN DE LURIGANCHO">San Juan de Lurigancho</option>
+              <option value="LURIGANCHO">Lurigancho - Chosica</option>
+              <option value="EL AGUSTINO">El Agustino</option>
+              <option value="SANTA ANITA">Santa Anita</option>
+              <option value="ATE">Ate</option>
+              <option value="LA MOLINA">La Molina</option>
+              <option value="SAN LUIS">San Luis</option>
+            </select>
+          </div>
+
+          <div id="district-benefit-panel" class="district-panel">
+            <!-- Se llena dinámicamente desde app.js -->
+          </div>
+        </div>
+
+        <!-- TAB 4: HERRAMIENTA DE GESTIÓN (PMBOK / D. LEG. 1192) Y FEEDBACK -->
+        <div id="tab-simulador" class="tab-content">
+          <div class="card-section">
+            <h3>Simulador de Ruta Crítica Predial e Interferencias</h3>
+            <p class="small-muted">Modelo referencial basado en el TUO del D. Leg. N.° 1192, Cláusula 6.29 (PAP) y estándares BID/Banco Mundial:</p>
+            <div class="sim-controls">
+              <label>Tipo de Gestión en Derecho de Vía:</label>
+              <select id="sim-tipo">
+                <option value="trato_directo">Adquisición Predial &mdash; Trato Directo (+20% incentivo)</option>
+                <option value="expropiacion">Adquisición Predial &mdash; Proceso de Expropiación</option>
+                <option value="telecom">Liberación de Interferencias &mdash; Telecomunicaciones / Fibra</option>
+                <option value="saneamiento">Liberación de Interferencias &mdash; Saneamiento / Energía (AT/MT)</option>
+              </select>
+            </div>
+            <div id="sim-result" class="sim-result-box"></div>
+          </div>
+
+          <div class="card-section">
+            <h3>Buzón Ejecutivo &amp; Contacto Profesional</h3>
+            <p class="small-muted">¿Deseas adaptar esta arquitectura WebGIS a tu proyecto o empresa? Déjame un mensaje directo:</p>
+            <textarea id="feedback-text" rows="3" placeholder="Escribe tu comentario, consulta técnica o propuesta de colaboración..."></textarea>
+            <button id="btn-send-feedback" class="btn-primary">Enviar Mensaje a Vladimir Casas</button>
+            <p id="feedback-status" class="small-muted"></p>
+          </div>
+        </div>
+
+        <!-- PIE DE AUTORÍA -->
+        <footer class="panel-footer">
+          <strong>Ing. Vladimir J. Casas P.</strong> &bull; Gestión de Proyectos, Predios &amp; ConTech WebGIS<br />
+          <a href="https://www.linkedin.com/in/vjcasasp/" target="_blank" rel="noopener">LinkedIn</a> &bull;
+          <a href="https://github.com/VlaCasPa" target="_blank" rel="noopener">GitHub (VlaCasPa)</a>
+        </footer>
+      </aside>
+    </main>
+  </div>
+
+  <!-- MODAL DE METODOLOGÍA DE MAESTRÍA Y SUSTENTO -->
+  <div id="method-modal" class="modal-backdrop hidden">
+    <div class="modal-card wide">
+      <div class="modal-header-row">
+        <h2>Sustento Metodológico y Enfoque de Gestión de Proyectos</h2>
+        <button id="close-method" class="btn-close">&times;</button>
+      </div>
+      <p class="modal-subtitle">Aplicación práctica de herramientas de la Maestría en Gestión de la Construcción (UTP) al seguimiento ejecutivo de megaproyectos:</p>
+      <div class="method-grid">
+        <div class="method-item">
+          <h4>1. Guía PMBOK (PMI)</h4>
+          <p>Estructura del visor alineada a las áreas de conocimiento de <strong>Alcance</strong> (34.8 km y 46 estructuras singulares), <strong>Cronograma</strong> (ruta crítica por tramos y hitos MTP Go/No-Go), <strong>Costos</strong> (curva CAPEX 2025&ndash;2029) e <strong>Interesados</strong> (planes de participación ciudadana y relacionamiento temprano).</p>
+        </div>
+        <div class="method-item">
+          <h4>2. Design Thinking</h4>
+          <p>Diseño centrado en el usuario decisor (gerentes de obra, PMO, inversionistas y autoridades): transformación de expedientes legales extensos y tablas de 2,798 coordenadas en una interfaz visual intuitiva en menos de 3 clics.</p>
+        </div>
+        <div class="method-item">
+          <h4>3. Data Mining &amp; Geoprocesamiento</h4>
+          <p>Extracción, limpieza y estandarización espacial (WGS84 / EPSG:4326) de resoluciones ministeriales, planos de planta, tablas de progresivas y límites distritales mediante RustGIS y estructuración GeoJSON ligera.</p>
+        </div>
+        <div class="method-item">
+          <h4>4. Analítica Predictiva Conceptual</h4>
+          <p>Categorización de escenarios de liberación de áreas e interferencias según densidad urbana y complejidad institucional (TUO D. Leg. N.° 1192 y estándares socioambientales BID/BM).</p>
+        </div>
+      </div>
+      <div class="disclaimer-box">
+        <strong>Fuentes Oficiales Consultadas (Corte: 27/11/2026):</strong> Ministerio de Transportes y Comunicaciones (R.M. N.° 869-2025-MTC/01.02), OSITRAN, PROINVERSIÓN, Plan de Negocios de la Sociedad Concesionaria Anillo Vial S.A.C. (Febrero 2025) y cartografía referencial GeoGPS Perú.
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
