@@ -69,9 +69,16 @@
           <span class="pulse-green"></span>
           <span>Visitas: <strong id="visit-counter">...</strong></span>
         </div>
+
+        <button id="btn-open-buzon" class="btn-topbar-icon" title="Abrir Buzón Ejecutivo de Contacto">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>Buzón</span>
+        </button>
+
         <button id="btn-sustento" class="btn-sustento" title="Abrir Informe de Sustento Técnico en pantalla completa">
           Sustento Técnico
         </button>
+
         <div class="user-chip">
           <img id="user-photo" src="" alt="Usuario" />
           <span id="user-name">Invitado</span>
@@ -86,34 +93,35 @@
       <section class="map-pane">
         <div id="map"></div>
 
-        <!-- SELECTOR RÁPIDO DE TRAMOS SOBRE EL MAPA -->
+        <!-- SELECTOR RÁPIDO DE TRAMOS CON COLORES COHERENTES -->
         <div class="tramo-bar">
           <button class="tramo-btn active" data-tramo="ALL">Todos (34.8 km)</button>
-          <button class="tramo-btn" data-tramo="I">Tramo I (8.7 km)</button>
-          <button class="tramo-btn" data-tramo="II">Tramo II (15.1 km)</button>
-          <button class="tramo-btn" data-tramo="III">Tramo III (11.0 km)</button>
+          <button class="tramo-btn t1-pill" data-tramo="I"><span class="pill-dot" style="background:#f59e0b"></span> Tramo I (8.7 km)</button>
+          <button class="tramo-btn t2-pill" data-tramo="II"><span class="pill-dot" style="background:#ea580c"></span> Tramo II (15.1 km)</button>
+          <button class="tramo-btn t3-pill" data-tramo="III"><span class="pill-dot" style="background:#0284c7"></span> Tramo III (11.0 km)</button>
         </div>
 
-        <!-- CONTROL FLOTANTE DE CAPAS DINÁMICAS -->
+        <!-- CONTROL FLOTANTE DE CAPAS DINÁMICAS (INICIA SOLO CON TRAMOS ENCENDIDOS) -->
         <aside class="layers-card">
           <div class="layers-header">
             <span>Capas del Proyecto</span>
             <button id="toggle-layers" title="Minimizar/Expandir">&minus;</button>
           </div>
           <div id="layers-body" class="layers-body">
-            <label class="layer-item"><input type="checkbox" data-layer="tramo1" checked /><span class="swatch" style="background:#0284c7"></span> Eje Tramo I (Oeste-Norte)</label>
-            <label class="layer-item"><input type="checkbox" data-layer="tramo2" checked /><span class="swatch" style="background:#d97706"></span> Eje Tramo II (Norte-Este)</label>
-            <label class="layer-item"><input type="checkbox" data-layer="tramo3" checked /><span class="swatch" style="background:#059669"></span> Eje Tramo III (Este-Sur)</label>
-            <label class="layer-item"><input type="checkbox" data-layer="derechoVia" checked /><span class="swatch" style="background:#7c3aed; opacity:.55"></span> Derecho de Vía (R.M. 869-2025)</label>
+            <div class="layers-group-title">Ejes Troncales (Activos)</div>
+            <label class="layer-item"><input type="checkbox" data-layer="tramo1" checked /><span class="swatch" style="background:#f59e0b"></span> Tramo I (Oeste&ndash;Norte)</label>
+            <label class="layer-item"><input type="checkbox" data-layer="tramo2" checked /><span class="swatch" style="background:#ea580c"></span> Tramo II (Norte&ndash;Este)</label>
+            <label class="layer-item"><input type="checkbox" data-layer="tramo3" checked /><span class="swatch" style="background:#0284c7"></span> Tramo III (Este&ndash;Sur)</label>
             <hr />
-            <label class="layer-item"><input type="checkbox" data-layer="ivd" checked /><span class="dot" style="background:#eab308"></span> Intercambios Viales (12)</label>
-            <label class="layer-item"><input type="checkbox" data-layer="bypass" checked /><span class="dot" style="background:#ef4444"></span> Pasos a Desnivel / Bypass (24)</label>
-            <label class="layer-item"><input type="checkbox" data-layer="tuneles" checked /><span class="dot" style="background:#1e293b"></span> Túneles Tramo II (4.22 km)</label>
-            <label class="layer-item"><input type="checkbox" data-layer="viaducto" checked /><span class="dot" style="background:#ec4899"></span> Viaducto Av. El Sol (1.41 km)</label>
-            <label class="layer-item"><input type="checkbox" data-layer="peajes" checked /><span class="dot" style="background:#0ea5e9"></span> Estaciones de Peaje (5)</label>
-            <label class="layer-item"><input type="checkbox" data-layer="cruces" checked /><span class="dot" style="background:#14b8a6"></span> Cruces Especiales (Río/FFCC)</label>
-            <hr />
-            <label class="layer-item"><input type="checkbox" data-layer="distritos" checked /><span class="swatch" style="background:#94a3b8; opacity:.4"></span> Distritos (Clic para beneficios)</label>
+            <div class="layers-group-title">Infraestructura y Territorio</div>
+            <label class="layer-item"><input type="checkbox" data-layer="derechoVia" /><span class="swatch" style="background:#8b5cf6; opacity:.65"></span> Derecho de Vía (R.M. 869-2025)</label>
+            <label class="layer-item"><input type="checkbox" data-layer="ivd" /><span class="ico-legend" style="background:#fef08a; color:#854d0e;">IV</span> Intercambios Viales (12)</label>
+            <label class="layer-item"><input type="checkbox" data-layer="bypass" /><span class="ico-legend" style="background:#fee2e2; color:#991b1b;">BP</span> Pasos a Desnivel / Bypass (24)</label>
+            <label class="layer-item"><input type="checkbox" data-layer="tuneles" /><span class="ico-legend" style="background:#e2e8f0; color:#0f172a;">TN</span> Túneles Tramo II (4.22 km)</label>
+            <label class="layer-item"><input type="checkbox" data-layer="viaducto" /><span class="ico-legend" style="background:#fce7f3; color:#9d174d;">VD</span> Viaducto Av. El Sol (1.41 km)</label>
+            <label class="layer-item"><input type="checkbox" data-layer="peajes" /><span class="ico-legend" style="background:#e0f2fe; color:#075985;">PJ</span> Estaciones de Peaje (5)</label>
+            <label class="layer-item"><input type="checkbox" data-layer="cruces" /><span class="ico-legend" style="background:#ccfbf1; color:#115e59;">CR</span> Cruces Especiales (Río/FFCC)</label>
+            <label class="layer-item"><input type="checkbox" data-layer="distritos" /><span class="swatch" style="background:#94a3b8; opacity:.5"></span> Distritos (Clic para beneficios)</label>
           </div>
         </aside>
       </section>
@@ -131,22 +139,22 @@
         <!-- TAB 1: RESUMEN EJECUTIVO Y FINANCIERO -->
         <div id="tab-resumen" class="tab-content active">
           <div class="kpi-grid">
-            <div class="kpi-card highlight">
+            <div class="kpi-card kpi-amber">
               <span class="kpi-label">Inversión Total Estimada</span>
               <span class="kpi-value">US$ 3,400 M</span>
               <span class="kpi-note">APP &bull; Cintra, Sacyr y ACCIONA</span>
             </div>
-            <div class="kpi-card">
+            <div class="kpi-card kpi-sky">
               <span class="kpi-label">Impacto Macroeconómico</span>
               <span class="kpi-value">2.5% PBI Lima</span>
               <span class="kpi-note">-13% brecha transporte Perú</span>
             </div>
-            <div class="kpi-card">
+            <div class="kpi-card kpi-emerald">
               <span class="kpi-label">Población Beneficiada</span>
               <span class="kpi-value">4.5 Millones</span>
               <span class="kpi-note">11 distritos Lima + Callao</span>
             </div>
-            <div class="kpi-card">
+            <div class="kpi-card kpi-violet">
               <span class="kpi-label">Vértices Derecho de Vía</span>
               <span class="kpi-value">2,798 Pts</span>
               <span class="kpi-note">R.M. N.° 869-2025-MTC/01.02</span>
@@ -154,69 +162,109 @@
           </div>
 
           <div class="card-section">
-            <h3>Proyección de CAPEX y Gasto Financiero (2025&ndash;2029)</h3>
-            <p class="small-muted">Desembolsos proyectados según Plan de Negocios (US$ 2,048.79 M acumulados al 2029):</p>
+            <h3>Curva Proyectada de CAPEX + Gasto Financiero (2025&ndash;2029)</h3>
+            <p class="small-muted">Total periodo: <strong>US$ 2,048.79 M</strong> (Inversión promedio US$ 300 M/año por 7 años):</p>
             <div class="capex-bars">
-              <div class="bar-row"><span>2025</span><div class="bar-track"><div class="bar-fill" style="width:24%"></div></div><strong>US$ 162.5M</strong></div>
-              <div class="bar-row"><span>2026</span><div class="bar-track"><div class="bar-fill" style="width:21%"></div></div><strong>US$ 140.8M</strong></div>
-              <div class="bar-row"><span>2027</span><div class="bar-track"><div class="bar-fill" style="width:63%"></div></div><strong>US$ 421.3M</strong></div>
-              <div class="bar-row"><span>2028</span><div class="bar-track"><div class="bar-fill" style="width:97%"></div></div><strong>US$ 652.4M</strong></div>
-              <div class="bar-row"><span>2029</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><strong>US$ 671.9M</strong></div>
+              <div class="bar-row"><span>2025</span><div class="bar-track"><div class="bar-fill" style="width:24%; background:#f59e0b"></div></div><strong>US$ 162.5M</strong></div>
+              <div class="bar-row"><span>2026</span><div class="bar-track"><div class="bar-fill" style="width:21%; background:#f59e0b"></div></div><strong>US$ 140.8M</strong></div>
+              <div class="bar-row"><span>2027</span><div class="bar-track"><div class="bar-fill" style="width:63%; background:#ea580c"></div></div><strong>US$ 421.3M</strong></div>
+              <div class="bar-row"><span>2028</span><div class="bar-track"><div class="bar-fill" style="width:97%; background:#0284c7"></div></div><strong>US$ 652.4M</strong></div>
+              <div class="bar-row"><span>2029</span><div class="bar-track"><div class="bar-fill" style="width:100%; background:#059669"></div></div><strong>US$ 671.9M</strong></div>
             </div>
             <div class="finance-badges">
               <span>Carta Fianza BCP: <strong>US$ 30M</strong></span>
-              <span>37 Entidades Financieras (65% Int. / 24% Des. / 11% Loc.)</span>
+              <span>37 Bancos (65% Int. / 24% Des. / 11% Loc.)</span>
             </div>
           </div>
 
           <div class="card-section">
-            <h3>Ingeniería, Tecnología ITS y Conectividad Multimodal</h3>
-            <ul class="feature-list">
-              <li><strong>Autopista Urbana Inteligente (ITS):</strong> 3 carriles por sentido (80&ndash;120 km/h), Centro de Control de Operaciones (OCC), detección automática de incidentes, pesaje dinámico y paneles de mensajería variable.</li>
-              <li><strong>Movilidad Local Gratuita:</strong> Vías laterales libres de peaje en todo el recorrido y puentes peatonales cada 500 m.</li>
-              <li><strong>Articulación Multimodal:</strong> Acceso directo al Puerto del Callao, Aeropuerto Jorge Chávez, Línea 1 (SJL), Línea 2 (Ate/Santa Anita), Metropolitano y 6 rutas nacionales (PE-1N, PE-1S, PE-20, PE-22).</li>
-              <li><strong>Empleo y Desarrollo:</strong> Miles de puestos de trabajo directos e indirectos en ingeniería, liberación predial, construcción y operación.</li>
-            </ul>
+            <h3>Pilares de Ingeniería, Tecnología y Conectividad</h3>
+            <div class="pillars-grid">
+              <div class="pillar-box">
+                <div class="pillar-ico">ITS</div>
+                <strong>Smart Highway</strong>
+                <span>3 carriles/sentido (80&ndash;120 km/h), OCC, paneles variables y pesaje dinámico.</span>
+              </div>
+              <div class="pillar-box">
+                <div class="pillar-ico">VÍA</div>
+                <strong>Vías Laterales Libres</strong>
+                <span>Calzadas auxiliares gratuitas en todo el eje y puentes peatonales c/500 m.</span>
+              </div>
+              <div class="pillar-box">
+                <div class="pillar-ico">RED</div>
+                <strong>Sinergia Multimodal</strong>
+                <span>Puerto Callao, Aeropuerto, Línea 1, Línea 2, Metropolitano y 6 rutas nacionales.</span>
+              </div>
+              <div class="pillar-box">
+                <div class="pillar-ico">EMP</div>
+                <strong>Empleo &amp; Desarrollo</strong>
+                <span>Miles de empleos directos e indirectos en ingeniería, obra y operación.</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- TAB 2: ANÁLISIS POR TRAMO Y EXPROPIACIONES -->
+        <!-- TAB 2: TRAMOS Y PREDIOS (VISUAL: GRÁFICOS + TABLA COMPACTA) -->
         <div id="tab-tramos" class="tab-content">
-          <div class="tramo-detail-card border-t1">
-            <div class="td-header">
-              <h4>TRAMO I: Eje Logístico y Aeroportuario</h4>
-              <span class="badge-t1">8.7 km &bull; 5.2 años</span>
+          <div class="card-section">
+            <h3>Distribución de Longitud (34.8 km) y Plazos de Obra</h3>
+            <div class="tramo-visual-bars">
+              <div class="tv-row">
+                <div class="tv-head"><span class="tag-t1">Tramo I &bull; 8.7 km (25%)</span><strong>5.2 años (38m obra)</strong></div>
+                <div class="tv-track"><div class="tv-fill" style="width:55%; background:#f59e0b;"></div></div>
+              </div>
+              <div class="tv-row">
+                <div class="tv-head"><span class="tag-t2">Tramo II &bull; 15.1 km (43.4%)</span><strong>9.5 años (60m túneles)</strong></div>
+                <div class="tv-track"><div class="tv-fill" style="width:100%; background:#ea580c;"></div></div>
+              </div>
+              <div class="tv-row">
+                <div class="tv-head"><span class="tag-t3">Tramo III &bull; 11.0 km (31.6%)</span><strong>5.8 años (42m obra)</strong></div>
+                <div class="tv-track"><div class="tv-fill" style="width:62%; background:#0284c7;"></div></div>
+              </div>
             </div>
-            <p><strong>Jurisdicción:</strong> Callao, San Martín de Porres, Los Olivos, Independencia.</p>
-            <p><strong>Estructuras:</strong> 5 Intercambios Viales (Gambetta, Faucett, Canta Callao, Universitaria, Panamericana Norte), 5 Pasos a Desnivel y 1 Peaje Troncal.</p>
-            <p><strong>Gestión Predial &amp; Avances:</strong> Liberación 100% predios en Mes 24; remoción interferencias en 24/38 meses (convenios telecom vigentes a 13 meses; entregas de cheques PROINVERSIÓN en curso).</p>
           </div>
 
-          <div class="tramo-detail-card border-t2">
-            <div class="td-header">
-              <h4>TRAMO II: Integración Norte&ndash;Este y Túneles</h4>
-              <span class="badge-t2">15.1 km &bull; 9.5 años</span>
-            </div>
-            <p><strong>Jurisdicción:</strong> Independencia, Comas, San Juan de Lurigancho, Lurigancho-Chosica.</p>
-            <p><strong>Estructuras:</strong> 1 IVD (Próceres), 11 Pasos a Desnivel, <strong>Túnel 1 (2,285 m)</strong>, <strong>Túnel 2 (1,935 m)</strong>, <strong>Viaducto Av. El Sol (1,412 m)</strong> y 2 Peajes.</p>
-            <p><strong>Gestión Predial &amp; Ambiental:</strong> Concentra el <strong>96% de las expropiaciones</strong> (~2,454 predios de ~4,100 totales). Hito de liberación predial (Mes 46/66) y remediación ambiental del ex vertedero La Vizcachera (Mes 78).</p>
+          <div class="card-section">
+            <h3>Inventario de Estructuras por Tramo</h3>
+            <table class="mini-table">
+              <thead>
+                <tr>
+                  <th>Componente</th>
+                  <th style="color:#b45309;">Tramo I</th>
+                  <th style="color:#c2410c;">Tramo II</th>
+                  <th style="color:#0369a1;">Tramo III</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td><strong>Intercambios (IVD)</strong></td><td>5</td><td>1</td><td>6</td></tr>
+                <tr><td><strong>Pasos Desnivel</strong></td><td>5</td><td>11</td><td>8</td></tr>
+                <tr><td><strong>Túneles / Viaducto</strong></td><td>&mdash;</td><td>2 Tún. + 1 Viad.</td><td>&mdash;</td></tr>
+                <tr><td><strong>Estaciones Peaje</strong></td><td>1 Troncal</td><td>1 Tron. + 1 Lat.</td><td>1 Tron. + 1 Lat.</td></tr>
+                <tr><td><strong>Cruces Especiales</strong></td><td>&mdash;</td><td>&mdash;</td><td>Río + FFCC</td></tr>
+              </tbody>
+            </table>
           </div>
 
-          <div class="tramo-detail-card border-t3">
-            <div class="td-header">
-              <h4>TRAMO III: Corredor Industrial y Empresarial</h4>
-              <span class="badge-t3">11.0 km &bull; 5.8 años</span>
+          <div class="card-section">
+            <h3>Carga Predial y Gestión Ambiental por Tramo</h3>
+            <div class="predial-split">
+              <div class="ps-bar">
+                <div style="width:96%; background:#ea580c;" title="Tramo II: 96% de expropiaciones">Tramo II: 96% Expropiaciones</div>
+                <div style="width:4%; background:#0284c7;" title="Tramos I y III: 4%"></div>
+              </div>
+              <div class="ps-cards">
+                <div class="ps-item b-t1"><strong>Tramo I:</strong> Meta predios Mes 24. Convenios telecom vigentes (13m) y compensaciones PROINVERSIÓN activas.</div>
+                <div class="ps-item b-t2"><strong>Tramo II:</strong> ~2,454 expropiaciones (de ~4,100 predios). Remediación ambiental ex vertedero <em>La Vizcachera</em> (Mes 78).</div>
+                <div class="ps-item b-t3"><strong>Tramo III:</strong> Meta predios Mes 28. Creación del <em>Parque Lineal Separadora Industrial</em>.</div>
+              </div>
             </div>
-            <p><strong>Jurisdicción:</strong> Lurigancho, El Agustino, Santa Anita, Ate, La Molina, San Luis.</p>
-            <p><strong>Estructuras:</strong> 6 IVD (Ramiro Prialé, Carretera Central, Huarochirí, La Molina, Evitamiento, Circunvalación), 8 Pasos a Desnivel, Cruce Río Rímac, Cruce FFCC Central y 2 Peajes.</p>
-            <p><strong>Gestión Predial &amp; Urbana:</strong> Liberación 100% predios en Mes 28; incluye tratamiento paisajístico y creación del Parque Lineal en Separadora Industrial.</p>
           </div>
         </div>
 
-        <!-- TAB 3: BENEFICIOS POR DISTRITO (INTERACTIVO AL HACER CLIC EN MAPA) -->
+        <!-- TAB 3: BENEFICIOS POR DISTRITO (TARJETAS INFOGRÁFICAS CREATIVAS) -->
         <div id="tab-distrito" class="tab-content">
           <div class="district-selector-box">
-            <label for="district-select">Seleccione o haga clic en un distrito del mapa:</label>
+            <label for="district-select">Seleccione un distrito o píquelo en el mapa:</label>
             <select id="district-select">
               <option value="CALLAO">Callao (Provincia Constitucional)</option>
               <option value="SAN MARTIN DE PORRES">San Martín de Porres</option>
@@ -234,33 +282,46 @@
           </div>
 
           <div id="district-benefit-panel" class="district-panel">
-            <!-- Se llena dinámicamente desde app.js -->
+            <!-- Se llena dinámicamente con tarjetas visuales desde app.js -->
           </div>
         </div>
 
-        <!-- TAB 4: HERRAMIENTA DE GESTIÓN (PMBOK / D. LEG. 1192) Y FEEDBACK -->
+        <!-- TAB 4: GESTIÓN Y PLAZOS (VISUAL + BOTONES DE ESQUEMAS EMERGENTES) -->
         <div id="tab-simulador" class="tab-content">
           <div class="card-section">
-            <h3>Simulador de Ruta Crítica Predial e Interferencias</h3>
-            <p class="small-muted">Modelo referencial basado en el TUO del D. Leg. N.° 1192, Cláusula 6.29 (PAP) y estándares BID/Banco Mundial:</p>
-            <div class="sim-controls">
-              <label>Tipo de Gestión en Derecho de Vía:</label>
-              <select id="sim-tipo">
-                <option value="trato_directo">Adquisición Predial &mdash; Trato Directo (+20% incentivo)</option>
-                <option value="expropiacion">Adquisición Predial &mdash; Proceso de Expropiación</option>
-                <option value="telecom">Liberación de Interferencias &mdash; Telecomunicaciones / Fibra</option>
-                <option value="saneamiento">Liberación de Interferencias &mdash; Saneamiento / Energía (AT/MT)</option>
-              </select>
+            <h3>Flujo Visual de Gestión Predial e Interferencias</h3>
+            <p class="small-muted">Seleccione escenario (TUO D. Leg. N.° 1192 y Estándares BID/BM):</p>
+            <select id="sim-tipo">
+              <option value="trato_directo">Predial &mdash; Trato Directo (+20% incentivo)</option>
+              <option value="expropiacion">Predial &mdash; Expropiación (TUO D. Leg. 1192)</option>
+              <option value="telecom">Interferencias &mdash; Telecomunicaciones / Fibra</option>
+              <option value="saneamiento">Interferencias &mdash; Saneamiento / Energía</option>
+            </select>
+
+            <div id="sim-visual-timeline" class="timeline-flow">
+              <!-- Línea de tiempo gráfica generada desde app.js -->
             </div>
-            <div id="sim-result" class="sim-result-box"></div>
           </div>
 
           <div class="card-section">
-            <h3>Buzón Ejecutivo &amp; Contacto Profesional</h3>
-            <p class="small-muted">¿Deseas adaptar esta arquitectura WebGIS a tu proyecto o empresa? Déjame un mensaje directo:</p>
-            <textarea id="feedback-text" rows="3" placeholder="Escribe tu comentario, consulta técnica o propuesta de colaboración..."></textarea>
-            <button id="btn-send-feedback" class="btn-primary">Enviar Mensaje a Vladimir Casas</button>
-            <p id="feedback-status" class="small-muted"></p>
+            <h3>Esquemas Gerenciales de Referencia (PMBOK)</h3>
+            <p class="small-muted">Visualice los diagramas maestros de cronograma contractual y estrategia socio-predial:</p>
+            <div class="modal-triggers-grid">
+              <button id="btn-chart-cronograma" class="btn-schema">
+                <span class="schema-ico">📅</span>
+                <div>
+                  <strong>Cronograma Maestro</strong>
+                  <span>Hitos EDI, IGA, Predios y Obra</span>
+                </div>
+              </button>
+              <button id="btn-chart-predial" class="btn-schema">
+                <span class="schema-ico">🏛️</span>
+                <div>
+                  <strong>Estrategia Socio-Predial</strong>
+                  <span>Flujo DTL-S, ETL, Tasación y PAP</span>
+                </div>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -273,10 +334,36 @@
     </main>
   </div>
 
-  <!-- MÓDULO DE LECTURA: INFORME DE SUSTENTO TÉCNICO (VENTANA EMERGENTE EDITABLE EN HTML) -->
+  <!-- MODAL EMERGENTE: BUZÓN EJECUTIVO DE CONTACTO -->
+  <div id="buzon-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header-row">
+        <h2>Buzón Ejecutivo &amp; Contacto Profesional</h2>
+        <button id="close-buzon" class="btn-close">&times;</button>
+      </div>
+      <p class="modal-subtitle">
+        ¿Deseas implementar una arquitectura WebGIS o tablero de control de proyectos similar en tu organización? Déjame tu consulta o comentario:
+      </p>
+      <textarea id="feedback-text" rows="4" placeholder="Escribe tu mensaje, consulta técnica o propuesta de colaboración..."></textarea>
+      <button id="btn-send-feedback" class="btn-primary">Enviar Mensaje a Ing. Vladimir Casas</button>
+      <p id="feedback-status" class="small-muted" style="margin-top:8px; text-align:center;"></p>
+    </div>
+  </div>
+
+  <!-- MODAL EMERGENTE: ESQUEMAS GRÁFICOS DE GESTIÓN Y PLAZOS -->
+  <div id="schema-modal" class="modal-backdrop hidden">
+    <div class="modal-card wide">
+      <div class="modal-header-row">
+        <h2 id="schema-modal-title">Esquema Gerencial</h2>
+        <button id="close-schema" class="btn-close">&times;</button>
+      </div>
+      <div id="schema-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- MÓDULO DE LECTURA AMPLIADO: INFORME DE SUSTENTO TÉCNICO -->
   <div id="sustento-modal" class="reader-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="sustento-title">
     <div class="reader-container">
-      <!-- BARRA SUPERIOR DEL MÓDULO DE LECTURA -->
       <div class="reader-topbar">
         <div class="reader-topbar-info">
           <span class="reader-pill">DOCUMENTO TÉCNICO DE SUSTENTO &bull; CORTE: 27/11/2026</span>
@@ -288,7 +375,6 @@
         </div>
       </div>
 
-      <!-- CUERPO JERARQUIZADO DEL DOCUMENTO -->
       <article class="reader-body">
         <header class="doc-cover">
           <div class="doc-kicker">INFORME TÉCNICO DE ARQUITECTURA, DATOS OFICIALES Y GESTIÓN DE PROYECTOS</div>
@@ -326,7 +412,7 @@
         <section class="doc-section">
           <h2>2. Estructura Técnica, Financiera y Contractual por Tramos</h2>
           <p>
-            De acuerdo con el Contrato de Concesión suscrito entre el Estado Peruano y la <strong>Sociedad Concesionaria Anillo Vial S.A.C.</strong> (conformada por los operadores internacionales <strong>Cintra, Sacyr y ACCIONA</strong>), el corredor se organiza en tres grandes tramos funcionales. Cada uno responde a una dinámica urbana, geotécnica y predial diferenciada, tal como se consolida en la siguiente matriz comparativa:
+            De acuerdo con el Contrato de Concesión suscrito entre el Estado Peruano y la <strong>Sociedad Concesionaria Anillo Vial S.A.C.</strong> (conformada por los operadores internacionales <strong>Cintra, Sacyr y ACCIONA</strong>), el corredor se organiza en tres grandes tramos funcionales con identidades cromáticas diferenciadas:
           </p>
 
           <div class="table-wrapper">
@@ -334,9 +420,9 @@
               <thead>
                 <tr>
                   <th>Dimensión Técnica / Contractual</th>
-                  <th>Tramo I (Oeste &ndash; Norte)</th>
-                  <th>Tramo II (Norte &ndash; Este)</th>
-                  <th>Tramo III (Este &ndash; Sur)</th>
+                  <th style="background:#b45309;">Tramo I (Oeste &ndash; Norte)</th>
+                  <th style="background:#c2410c;">Tramo II (Norte &ndash; Este)</th>
+                  <th style="background:#0369a1;">Tramo III (Este &ndash; Sur)</th>
                 </tr>
               </thead>
               <tbody>
@@ -374,54 +460,50 @@
             </table>
           </div>
 
-          <!-- GRÁFICOS VISUALES COMPARATIVOS (SVG + BARRAS) -->
           <div class="charts-grid">
             <div class="chart-card">
               <h4>Gráfico 1: Curva de Inversión CAPEX + Gasto Financiero (2025&ndash;2029)</h4>
               <p class="chart-sub">Desembolsos proyectados según Plan de Negocios (Total periodo: US$ 2,048.79 Millones)</p>
               <svg viewBox="0 0 420 190" class="svg-chart" aria-label="Gráfico de barras CAPEX 2025 a 2029">
-                <!-- Líneas guía -->
                 <line x1="45" y1="25" x2="400" y2="25" stroke="#e2e8f0" stroke-dasharray="3,3" />
                 <line x1="45" y1="65" x2="400" y2="65" stroke="#e2e8f0" stroke-dasharray="3,3" />
                 <line x1="45" y1="105" x2="400" y2="105" stroke="#e2e8f0" stroke-dasharray="3,3" />
                 <line x1="45" y1="145" x2="400" y2="145" stroke="#94a3b8" stroke-width="1.2" />
-                <!-- Etiquetas Y -->
                 <text x="40" y="29" font-size="9" fill="#64748b" text-anchor="end">$700M</text>
                 <text x="40" y="69" font-size="9" fill="#64748b" text-anchor="end">$450M</text>
                 <text x="40" y="109" font-size="9" fill="#64748b" text-anchor="end">$200M</text>
                 <text x="40" y="148" font-size="9" fill="#64748b" text-anchor="end">$0</text>
-                <!-- Barras -->
-                <rect x="65" y="117" width="42" height="28" rx="4" fill="#0284c7" />
+                <rect x="65" y="117" width="42" height="28" rx="4" fill="#f59e0b" />
                 <text x="86" y="112" font-size="9.5" font-weight="700" fill="#0f172a" text-anchor="middle">$162.5M</text>
                 <text x="86" y="162" font-size="10" font-weight="600" fill="#334155" text-anchor="middle">2025</text>
 
-                <rect x="135" y="121" width="42" height="24" rx="4" fill="#0284c7" />
+                <rect x="135" y="121" width="42" height="24" rx="4" fill="#f59e0b" />
                 <text x="156" y="116" font-size="9.5" font-weight="700" fill="#0f172a" text-anchor="middle">$140.8M</text>
                 <text x="156" y="162" font-size="10" font-weight="600" fill="#334155" text-anchor="middle">2026</text>
 
-                <rect x="205" y="73" width="42" height="72" rx="4" fill="#0369a1" />
+                <rect x="205" y="73" width="42" height="72" rx="4" fill="#ea580c" />
                 <text x="226" y="68" font-size="9.5" font-weight="700" fill="#0f172a" text-anchor="middle">$421.3M</text>
                 <text x="226" y="162" font-size="10" font-weight="600" fill="#334155" text-anchor="middle">2027</text>
 
-                <rect x="275" y="33" width="42" height="112" rx="4" fill="#059669" />
+                <rect x="275" y="33" width="42" height="112" rx="4" fill="#0284c7" />
                 <text x="296" y="28" font-size="9.5" font-weight="700" fill="#0f172a" text-anchor="middle">$652.4M</text>
                 <text x="296" y="162" font-size="10" font-weight="600" fill="#334155" text-anchor="middle">2028</text>
 
-                <rect x="345" y="30" width="42" height="115" rx="4" fill="#047857" />
+                <rect x="345" y="30" width="42" height="115" rx="4" fill="#059669" />
                 <text x="366" y="25" font-size="9.5" font-weight="700" fill="#0f172a" text-anchor="middle">$671.9M</text>
                 <text x="366" y="162" font-size="10" font-weight="600" fill="#334155" text-anchor="middle">2029</text>
               </svg>
             </div>
 
             <div class="chart-card">
-              <h4>Gráfico 2: Distribución de Longitud y Estructuras por Tramo</h4>
-              <p class="chart-sub">Participación porcentual sobre los 34.8 km totales e inventario de obras mayores</p>
+              <h4>Gráfico 2: Distribución de Longitud y Respaldo Financiero</h4>
+              <p class="chart-sub">Participación porcentual sobre los 34.8 km totales e indicadores financieros</p>
               <div class="stacked-visual">
-                <div class="sv-label">Distribución Kilométrica (34.8 km totales):</div>
+                <div class="sv-label">Distribución Kilométrica por Tramo (34.8 km):</div>
                 <div class="sv-bar">
-                  <div style="width:25%; background:#0284c7;" title="Tramo I: 8.7 km (25%)">T1: 8.7 km (25%)</div>
-                  <div style="width:43.4%; background:#d97706;" title="Tramo II: 15.1 km (43.4%)">T2: 15.1 km (43.4%)</div>
-                  <div style="width:31.6%; background:#059669;" title="Tramo III: 11.0 km (31.6%)">T3: 11.0 km (31.6%)</div>
+                  <div style="width:25%; background:#f59e0b;" title="Tramo I: 8.7 km (25%)">T1: 8.7 km (25%)</div>
+                  <div style="width:43.4%; background:#ea580c;" title="Tramo II: 15.1 km (43.4%)">T2: 15.1 km (43.4%)</div>
+                  <div style="width:31.6%; background:#0284c7;" title="Tramo III: 11.0 km (31.6%)">T3: 11.0 km (31.6%)</div>
                 </div>
                 <div class="sv-stats">
                   <div><strong>37 Bancos</strong><span>Estructuración financiera (65% Internacional, 24% Desarrollo, 11% Local)</span></div>
@@ -433,22 +515,43 @@
           </div>
         </section>
 
-        <!-- SECCIÓN 3 -->
+        <!-- SECCIÓN 3: BENEFICIOS CON GRÁFICO INFOGRÁFICO MULTIMODAL -->
         <section class="doc-section">
           <h2>3. Beneficios Estructurales, Tecnología y Sinergia Multimodal</h2>
           <p>
-            Más allá de constituir una vía rápida de circunvalación, el proyecto ha sido diseñado bajo un concepto de <strong>corredor multimodal e inteligente</strong> que transforma la productividad urbana de Lima y Callao:
+            Más allá de constituir una vía rápida de circunvalación, el proyecto ha sido diseñado bajo un concepto de <strong>corredor multimodal e inteligente</strong> que transforma la productividad urbana, logística y ambiental de Lima y Callao:
           </p>
-          <ul class="doc-list">
-            <li><strong>Conectividad Logística y Comercio Exterior:</strong> Establece un enlace directo y sin interrupciones semafóricas entre el <strong>Puerto del Callao</strong>, el <strong>Nuevo Aeropuerto Internacional Jorge Chávez</strong> y los polos industriales de Lima Norte y Lima Este (Santa Anita, Ate, Huachipa), reduciendo tiempos de transporte de carga y emisiones de CO<sub>2</sub>.</li>
-            <li><strong>Integración con el Transporte Masivo:</strong> Articula transversalmente la <strong>Línea 1 del Metro de Lima</strong> (San Juan de Lurigancho), la <strong>Línea 2 del Metro de Lima</strong> (Ate / Santa Anita / Carretera Central), el sistema <strong>Metropolitano</strong> (Independencia / Naranjal) y seis rutas nacionales (<strong>PE-1N, PE-1S, PE-20, PE-20B, PE-20J y PE-22</strong>).</li>
-            <li><strong>Equidad Territorial y Vías Laterales Gratuitas:</strong> Incorpora calzadas laterales libres de peaje en todo el trazo para el tránsito local, pasos peatonales cada 500 metros, paraderos integrados y el nuevo <strong>Parque Lineal de Separadora Industrial</strong>.</li>
-            <li><strong>Smart Highway y Seguridad Vial (ITS):</strong> Opera con un Centro de Control de Operaciones (OCC), paneles de mensajería variable, detección automática de incidentes, postes SOS, control de exceso de carga y equipamiento electromecánico de última generación en los 4.22 km de túneles dobles.</li>
-            <li><strong>Dinamización del Empleo:</strong> Impulsa la creación de miles de empleos directos e indirectos a lo largo de las fases de estudios definitivos (EDI/EIA-d), saneamiento físico-legal, construcción de obras civiles y operación vial.</li>
-          </ul>
+
+          <!-- GRÁFICO 3: SINERGIA MULTIMODAL E IMPACTOS -->
+          <div class="chart-card" style="margin-bottom: 18px;">
+            <h4>Gráfico 3: Ecosistema de Articulación Multimodal y Beneficios Urbanos del AVP</h4>
+            <p class="chart-sub">Conexión transversal con los principales nodos logísticos, portuarios, aeroportuarios y de transporte masivo</p>
+            <div class="multimodal-diagram">
+              <div class="mm-node" style="border-top: 4px solid #f59e0b;">
+                <span class="mm-badge" style="background:#fef3c7; color:#b45309;">TRAMO I &bull; LOGÍSTICA</span>
+                <strong>Puerto del Callao &amp; Aeropuerto</strong>
+                <p>Acceso expreso sin semáforos vía IVD Gambetta y Faucett, separando carga pesada del tránsito local.</p>
+              </div>
+              <div class="mm-node" style="border-top: 4px solid #ea580c;">
+                <span class="mm-badge" style="background:#ffedd5; color:#c2410c;">TRAMO II &bull; INTEGRACIÓN</span>
+                <strong>Metropolitano &amp; Línea 1 Metro</strong>
+                <p>Ruptura de barrera geográfica mediante Túneles 1 y 2 (4.22 km) y conexión directa en Naranjal y Próceres.</p>
+              </div>
+              <div class="mm-node" style="border-top: 4px solid #0284c7;">
+                <span class="mm-badge" style="background:#e0f2fe; color:#0369a1;">TRAMO III &bull; INDUSTRIA</span>
+                <strong>Línea 2 Metro &amp; Carretera Central</strong>
+                <p>Articulación con Mercado Mayorista de Santa Anita, FFCC Central, Parque Lineal y 6 rutas nacionales.</p>
+              </div>
+              <div class="mm-node" style="border-top: 4px solid #059669;">
+                <span class="mm-badge" style="background:#d1fae5; color:#047857;">OPERACIÓN &bull; SMART ITS</span>
+                <strong>Vías Libres, Empleo &amp; Seguridad</strong>
+                <p>Vías laterales gratuitas, pasos peatonales c/500 m, Centro de Control OCC y miles de empleos.</p>
+              </div>
+            </div>
+          </div>
         </section>
 
-        <!-- SECCIÓN 4 -->
+        <!-- SECCIÓN 4: METODOLOGÍA CON GRÁFICO DE FLUJO PREDIAL -->
         <section class="doc-section">
           <h2>4. Marco Metodológico Aplicado (Enfoque de Maestría en Gestión de Proyectos)</h2>
           <p>
@@ -487,6 +590,23 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+
+          <!-- GRÁFICO 4: FLUJO DE LIBERACIÓN DE ÁREAS -->
+          <div class="chart-card">
+            <h4>Gráfico 4: Flujo Metodológico de Liberación de Áreas y Gestión Social (Cláusula 6.29 - PAP)</h4>
+            <p class="chart-sub">Secuencia operativa bajo el TUO del D. Leg. N.° 1192 y estándares socioambientales BID / Banco Mundial</p>
+            <div class="process-steps">
+              <div class="p-step"><span>1</span><strong>Censo &amp; Levantamiento</strong><small>Diagnóstico social e identificación física</small></div>
+              <div class="p-arrow">&rarr;</div>
+              <div class="p-step"><span>2</span><strong>DTL-S &amp; ETL</strong><small>Diagnóstico y Expediente Técnico Legal</small></div>
+              <div class="p-arrow">&rarr;</div>
+              <div class="p-step"><span>3</span><strong>Tasación Oficial</strong><small>Valuación comercial + incentivo 20%</small></div>
+              <div class="p-arrow">&rarr;</div>
+              <div class="p-step"><span>4</span><strong>Adquisición / Trato</strong><small>Trato directo, expropiación o transferencia</small></div>
+              <div class="p-arrow">&rarr;</div>
+              <div class="p-step"><span>5</span><strong>Inscripción &amp; PAP</strong><small>Registro MTC y programas de compensación</small></div>
+            </div>
           </div>
         </section>
 
