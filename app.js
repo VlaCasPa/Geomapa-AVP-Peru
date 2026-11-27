@@ -20,12 +20,12 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
-// 2. BENEFICIOS OPERATIVOS POR DISTRITO
+// 2. BENEFICIOS OPERATIVOS POR DISTRITO (PALETA ÁMBAR / ESMERALDA / CELESTE)
 const BENEFICIOS_DISTRITOS = {
   "CALLAO": {
     titulo: "Provincia Constitucional del Callao",
     tramo: "Tramo I • Óvalo 200 Millas / Av. Néstor Gambetta",
-    bgPastel: "#fef3c7",
+    bgPastel: "#fef9c3",
     resumen: "Consolidación como puerta logística internacional del Perú con conectividad expresa sin semáforos hacia el Puerto del Callao y el nuevo Aeropuerto Jorge Chávez.",
     tarjetas: [
       { ico: "🛫", texto: "Intercambios Viales de alta capacidad en Néstor Gambetta (km 0+550) y Elmer Faucett (km 1+555)." },
@@ -36,7 +36,7 @@ const BENEFICIOS_DISTRITOS = {
   "SAN MARTIN DE PORRES": {
     titulo: "San Martín de Porres",
     tramo: "Tramo I • Eje Av. Canta Callao",
-    bgPastel: "#fef3c7",
+    bgPastel: "#fef9c3",
     resumen: "Permeabilidad vial transversal y reducción sustancial de tiempos de viaje entre Lima Norte, el Callao y Lima Este.",
     tarjetas: [
       { ico: "🌉", texto: "Intercambio Vial Canta Callao (km 5+800) y pasos a desnivel en Bertello (km 2+100), Carlos Izaguirre (km 3+200) y Los Alisos (km 4+500)." },
@@ -47,7 +47,7 @@ const BENEFICIOS_DISTRITOS = {
   "LOS OLIVOS": {
     titulo: "Los Olivos",
     tramo: "Tramo I • Eje Av. Naranjal / Universitaria",
-    bgPastel: "#fef3c7",
+    bgPastel: "#fef9c3",
     resumen: "Potenciación como centro comercial, universitario y de servicios de Lima Norte con acceso directo a toda la red metropolitana.",
     tarjetas: [
       { ico: "🎓", texto: "Intercambios Viales en Av. Universitaria (km 7+050) y Panamericana Norte (km 8+250)." },
@@ -58,7 +58,7 @@ const BENEFICIOS_DISTRITOS = {
   "INDEPENDENCIA": {
     titulo: "Independencia",
     tramo: "Articulación Tramo I y Tramo II",
-    bgPastel: "#ffedd5",
+    bgPastel: "#d1fae5",
     resumen: "Nodo estratégico de integración multimodal entre el sistema troncal del Metropolitano y la nueva autopista periférica.",
     tarjetas: [
       { ico: "🚌", texto: "Articulación directa en Panamericana Norte y paso a desnivel en Av. Túpac Amaru (km 8+900)." },
@@ -69,7 +69,7 @@ const BENEFICIOS_DISTRITOS = {
   "COMAS": {
     titulo: "Comas",
     tramo: "Tramo II • Conexión Portal Túnel 1",
-    bgPastel: "#ffedd5",
+    bgPastel: "#d1fae5",
     resumen: "Ruptura de la barrera geográfica histórica entre Lima Norte y San Juan de Lurigancho mediante ingeniería subterránea.",
     tarjetas: [
       { ico: "🚇", texto: "Acceso directo al Túnel 1 (2,285 m de longitud), conectando Comas con San Juan de Lurigancho en minutos." },
@@ -80,7 +80,7 @@ const BENEFICIOS_DISTRITOS = {
   "SAN JUAN DE LURIGANCHO": {
     titulo: "San Juan de Lurigancho",
     tramo: "Tramo II • Corredor Central y Túneles 1 y 2",
-    bgPastel: "#ffedd5",
+    bgPastel: "#d1fae5",
     resumen: "El mayor salto en conectividad urbana de Lima: apertura de dos salidas expresas de alta capacidad hacia Lima Norte y Lima Este.",
     tarjetas: [
       { ico: "🚇", texto: "Túnel 1 (2,285 m) hacia Comas/Panamericana Norte y Túnel 2 (1,935 m) hacia Ramiro Prialé." },
@@ -91,7 +91,7 @@ const BENEFICIOS_DISTRITOS = {
   "LURIGANCHO": {
     titulo: "Lurigancho - Chosica (Huachipa / Nievería)",
     tramo: "Articulación Tramo II y Tramo III",
-    bgPastel: "#ffedd5",
+    bgPastel: "#d1fae5",
     resumen: "Impulso al polo agroindustrial y logístico de Lima Este junto con una intervención emblemática de recuperación ambiental.",
     tarjetas: [
       { ico: "🌱", texto: "Remediación ambiental definitiva y recuperación del ex vertedero La Vizcachera, eliminando un pasivo histórico." },
@@ -251,7 +251,6 @@ function initMap() {
   map.createPane("paneEstructuras");
   map.getPane("paneEstructuras").style.zIndex = 620;
 
-  // Mapas base Google: Gris suave y Ortofoto/Satélite calibrada
   tileGray = L.tileLayer("https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
     attribution: "&copy; Google Maps | Geoportal AVP - Ing. Vladimir Casas",
     maxZoom: 20,
@@ -264,14 +263,12 @@ function initMap() {
     className: "google-sat-tiles"
   });
 
-  // 3 Ejes troncales activos al inicio (con sincronización al panel derecho)
-  cargarLinea("tramo1", "I", "data/TRAZO TRAMO I.geojson", "#f59e0b", "Tramo I (8.7 km) — Callao a Panamericana Norte", "Tramo 1 • 8.7 km", "lbl-t1", true);
-  cargarLinea("tramo2", "II", "data/TRAZO TRAMO II.geojson", "#ea580c", "Tramo II (15.1 km) — Panamericana Norte a Ramiro Prialé", "Tramo 2 • 15.1 km", "lbl-t2", true);
+  // 3 Ejes troncales activos al inicio (Ámbar / Esmeralda / Celeste)
+  cargarLinea("tramo1", "I", "data/TRAZO TRAMO I.geojson", "#eab308", "Tramo I (8.7 km) — Callao a Panamericana Norte", "Tramo 1 • 8.7 km", "lbl-t1", true);
+  cargarLinea("tramo2", "II", "data/TRAZO TRAMO II.geojson", "#10b981", "Tramo II (15.1 km) — Panamericana Norte a Ramiro Prialé", "Tramo 2 • 15.1 km", "lbl-t2", true);
   cargarLinea("tramo3", "III", "data/TRAZO TRAMO III.geojson", "#0284c7", "Tramo III (11.0 km) — Ramiro Prialé a Circunvalación", "Tramo 3 • 11.0 km", "lbl-t3", true);
 
-  // Capas secundarias apagadas por defecto
   cargarDistritos(false);
-  // Derecho de vía pastel suave (#c4b5fd) para que sea referencial y no sobresalga
   cargarPoligono("derechoVia", "data/DERECHO DE VIA.geojson", {
     color: "#8b5cf6",
     weight: 1.2,
@@ -287,7 +284,6 @@ function initMap() {
   cargarPuntos("peajes", "data/PEAJES.geojson", "PJ", "#0284c7", "#ffffff", "Estación de Peaje", false);
   cargarPuntos("cruces", "data/CRUCES.geojson", "CR", "#0d9488", "#ffffff", "Cruce Especial (Río / FFCC)", false);
 
-  // Control inteligente de densidad por Zoom (oculta Bypass en zoom < 12 para no saturar vista macro)
   map.on("zoomend", () => {
     const chkBypass = document.querySelector("input[data-layer='bypass']");
     if (!chkBypass || !chkBypass.checked || !layerGroups.bypass) return;
@@ -421,7 +417,7 @@ async function cargarTuneles(key, url, visibleInicial) {
         const longM = p["LONGITUD (m)"] || "";
         lyr.bindPopup(`
           <div style="font-family:Inter,sans-serif;font-size:12.5px;max-width:255px;">
-            <span style="font-size:10px;font-weight:800;color:#ea580c;">OBRA SUBTERRÁNEA &bull; TRAMO II</span><br/>
+            <span style="font-size:10px;font-weight:800;color:#059669;">OBRA SUBTERRÁNEA &bull; TRAMO II</span><br/>
             <strong style="font-size:13.5px;color:#0f172a;">${nombre}</strong><br/>
             ${pk ? `<strong>Progresiva:</strong> km ${pk}<br/>` : ""}
             ${longM ? `<strong>Longitud total:</strong> ${longM} metros<br/>` : ""}
@@ -541,11 +537,14 @@ function mostrarBeneficioDistrito(key) {
 function actualizarSimulador() {
   const tipo = document.getElementById("sim-tipo").value;
   const data = ESCENARIOS_GESTION[tipo];
+  const stepClasses = ["step-c1", "step-c2", "step-c3", "step-c4"];
+  const badgeColors = ["#0284c7", "#ca8a04", "#7c3aed", "#059669"];
+
   document.getElementById("sim-visual-timeline").innerHTML = `
     <div class="tl-badge">${data.plazo}</div>
     ${data.pasos.map((p, idx) => `
-      <div class="tl-step">
-        <div class="tl-num">${idx + 1}</div>
+      <div class="tl-step ${stepClasses[idx] || 'step-c1'}">
+        <div class="tl-num" style="background:${badgeColors[idx] || '#0284c7'};">${idx + 1}</div>
         <div>${p}</div>
       </div>
     `).join("")}
@@ -564,7 +563,7 @@ function abrirEsquemaModal(tipo) {
       <div class="table-wrapper">
         <table class="doc-table">
           <thead>
-            <tr><th>Hito Contractual</th><th style="background:#b45309;">Tramo I (8.7 km)</th><th style="background:#c2410c;">Tramo II (15.1 km)</th><th style="background:#0369a1;">Tramo III (11.0 km)</th></tr>
+            <tr><th>Hito Contractual</th><th style="background:#ca8a04;">Tramo I (8.7 km)</th><th style="background:#059669;">Tramo II (15.1 km)</th><th style="background:#0284c7;">Tramo III (11.0 km)</th></tr>
           </thead>
           <tbody>
             <tr><td><strong>Redacción / Aprobación EDI</strong></td><td>13m / 12m</td><td>35m / 28m</td><td>17m / 13m</td></tr>
@@ -664,7 +663,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("toggle-layers").textContent = "+";
   }
 
-  // Botón Google Sign-In
   document.getElementById("btn-google-login").addEventListener("click", async () => {
     try {
       await signInWithPopup(auth, provider);
@@ -675,7 +673,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Botón Acceso Invitado (Vista Rápida)
   document.getElementById("btn-guest-login").addEventListener("click", () => {
     sessionStorage.setItem("avp_guest_mode", "1");
     entrarAlPortal(null);
@@ -705,7 +702,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Conmutador Mapa Gris vs Satélite
   const btnGray = document.getElementById("btn-base-gray");
   const btnSat = document.getElementById("btn-base-sat");
   btnGray.addEventListener("click", () => {
@@ -721,7 +717,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (map && tileSat && !map.hasLayer(tileSat)) tileSat.addTo(map);
   });
 
-  // Buscador rápido de estructuras
   const searchInput = document.getElementById("struct-search-input");
   searchInput.addEventListener("change", () => {
     const val = searchInput.value.trim().toLowerCase();
@@ -800,17 +795,14 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btn-chart-predial").addEventListener("click", () => abrirEsquemaModal("predial"));
   document.getElementById("close-schema").addEventListener("click", () => document.getElementById("schema-modal").classList.add("hidden"));
 
-  // Modal Guía y Glosario
   const guideModal = document.getElementById("guide-modal");
   document.getElementById("btn-open-guide").addEventListener("click", () => guideModal.classList.remove("hidden"));
   document.getElementById("close-guide").addEventListener("click", () => guideModal.classList.add("hidden"));
 
-  // Modal Buzón Ejecutivo
   const buzonModal = document.getElementById("buzon-modal");
   document.getElementById("btn-open-buzon").addEventListener("click", () => buzonModal.classList.remove("hidden"));
   document.getElementById("close-buzon").addEventListener("click", () => buzonModal.classList.add("hidden"));
 
-  // Módulo de Lectura: Sustento Técnico
   const sustentoModal = document.getElementById("sustento-modal");
   document.getElementById("btn-sustento").addEventListener("click", () => {
     sustentoModal.classList.remove("hidden");
