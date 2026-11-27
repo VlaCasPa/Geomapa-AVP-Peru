@@ -2,6 +2,7 @@
 
 Plataforma interactiva de inteligencia territorial y analítica geoespacial para el monitoreo estratégico del **Proyecto Anillo Vial Periférico (34.8 km)**, autopista urbana concesionada bajo modalidad APP que articula **11 distritos de Lima Metropolitana y 1 del Callao** con una inversión estimada de **US$ 3,400 millones**.
 
+Desarrollado por Ing. CIP Vladimir Casas Palomino 
 ---
 
 ## Motivo y Propósito del Portal
@@ -41,4 +42,4 @@ Geomapa-Anillo-Vial/
     ├── VIADUCTO.geojson
     ├── PEAJES.geojson
     ├── CRUCES.geojson
-    └── DISTRITOS DE LIMA Y CALLAO (2).geojson
+    └── DISTRITOS DE LIMA Y CALLAO.geojson
